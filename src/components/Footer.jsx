@@ -1,5 +1,6 @@
 import { Zap } from 'lucide-react'
 import Wrapper from '../components/Wrapper'
+import Logo from "../assets/LogoMark.svg";
 
 const FOOTER_LINKS = [
   {
@@ -40,7 +41,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <div className='flex items-center gap-2'>
-              <Zap className='w-5 h-5 text-[#4C5DE8]' fill='currentColor' />
+             <img src={Logo} alt="" />
               <p className='font-Dm font-bold text-[#111320] text-lg'>Cephas Suite</p>
             </div>
 
