@@ -1,4 +1,3 @@
-
 import { FiArrowRight, FiCloud, FiShield, FiZap } from "react-icons/fi";
 import { motion } from "framer-motion";
 
@@ -105,7 +104,7 @@ function HeroLines() {
   const cy = hub.top + ICON_HALF;
 
   return (
-    <div className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none">
+    <div className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none hidden lg:block">
       <svg
         width="1"
         height="1"
@@ -185,8 +184,7 @@ export default function Home() {
   return (
     <div className="bg-[#fafbff] w-full overflow-x-hidden">
       <section
-        className="relative w-full overflow-hidden"
-        style={{ minHeight: 879 }}
+        className="relative w-full overflow-hidden min-h-[640px] sm:min-h-[720px] lg:min-h-[879px]"
       >
         <HeroLines />
 
@@ -195,7 +193,7 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
-          className="absolute left-[49.51%] right-[39.76%] top-[0] h-0 pointer-events-none"
+          className="absolute left-[49.51%] right-[39.76%] top-[0] h-0 pointer-events-none hidden md:block"
         >
           <div className="absolute inset-[-1px_0]">
             <img
@@ -207,7 +205,7 @@ export default function Home() {
         </motion.div>
 
         {/* Hero content */}
-        <div className="max-w-[1280px] mx-auto px-20 pt-[100px] flex flex-col items-center">
+        <div className="max-w-[1280px] mx-auto px-6 sm:px-10 lg:px-20 pt-16 sm:pt-20 lg:pt-[100px] flex flex-col items-center">
 
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -218,7 +216,7 @@ export default function Home() {
             }}
             className="flex flex-col items-center w-full"
           >
-            <p className="font-['Bricolage_Grotesque'] font-extrabold leading-[78px] text-[#111320] text-[80px] text-center tracking-[-2px] max-w-[978px]">
+            <p className="font-['Bricolage_Grotesque'] font-extrabold leading-[1.1] lg:leading-[78px] text-[#111320] text-[36px] sm:text-[52px] md:text-[64px] lg:text-[80px] text-center tracking-[-1px] lg:tracking-[-2px] max-w-[978px]">
               Run your entire enterprise on one operational engine.
             </p>
           </motion.div>
@@ -231,7 +229,7 @@ export default function Home() {
               delay: 0.2,
               ease: "easeOut",
             }}
-            className="mt-5 font-['DM_Sans'] font-normal leading-[28.05px] text-[#4f5674] text-[17px] text-center max-w-[580px]"
+            className="mt-4 sm:mt-5 font-['DM_Sans'] font-normal leading-[1.55] lg:leading-[28.05px] text-[#4f5674] text-[15px] sm:text-[16px] lg:text-[17px] text-center max-w-[580px]"
           >
             Deploy precision point apps to resolve immediate bottlenecks, or activate complete multi-department suites under a single login, unified database, and consolidated invoice.
           </motion.p>
@@ -243,9 +241,9 @@ export default function Home() {
               duration: 0.6,
               delay: 0.35,
             }}
-            className="mt-9 flex gap-[12px] items-center"
+            className="mt-7 sm:mt-9 flex flex-col sm:flex-row gap-[12px] items-center w-full sm:w-auto px-4 sm:px-0"
           >
-            <button className="bg-[#4c5de8] flex gap-[7px] items-center px-[22px] py-[11px] rounded-[8px] hover:bg-[#3d4ed9] transition-colors">
+            <button className="bg-[#4c5de8] flex gap-[7px] items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[#3d4ed9] transition-colors w-full sm:w-auto">
               <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[14px] text-center text-white tracking-[-0.14px] whitespace-nowrap">
                 Explore Standalone Apps
               </span>
@@ -256,7 +254,7 @@ export default function Home() {
               />
             </button>
 
-            <button className="border border-[#4f5674] flex items-center px-[22px] py-[11px] rounded-[8px] hover:bg-[rgba(79,86,116,0.05)] transition-colors">
+            <button className="border border-[#4f5674] flex items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[rgba(79,86,116,0.05)] transition-colors w-full sm:w-auto">
               <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[#4f5674] text-[14px] text-center tracking-[-0.14px] whitespace-nowrap">
                 Browse Integrated Suites
               </span>
@@ -270,7 +268,7 @@ export default function Home() {
               duration: 0.6,
               delay: 0.5,
             }}
-            className="mt-10 flex gap-[28px] items-center"
+            className="mt-8 sm:mt-10 flex flex-wrap justify-center gap-x-[28px] gap-y-3 items-center px-4"
           >
             {heroBadges.map(({ Icon, label }, index) => (
               <motion.div
@@ -296,41 +294,42 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Floating app icons */}
-        {floatingIcons.map(({ x, top, bg, kind }, i) => (
-          <motion.div
-            key={i}
-            initial={{
-              opacity: 0,
-              scale: 0.5,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.6,
-              delay: 0.5 + i * 0.08,
-              ease: "easeOut",
-            }}
-            className="absolute -translate-x-1/2 pointer-events-none"
-            style={{
-              left: `calc(50% + ${x}px)`,
-              top,
-            }}
-          >
-            <AppIcon
-              bg={bg}
-              kind={kind}
-            />
-          </motion.div>
-        ))}
+        {/* Floating app icons — decorative; hidden below lg since their
+            positions are hand-tuned offsets from a 1280px-wide hero and
+            would overflow or overlap the content on narrower viewports */}
+        <div className="hidden lg:block">
+          {floatingIcons.map(({ x, top, bg, kind }, i) => (
+            <motion.div
+              key={i}
+              initial={{
+                opacity: 0,
+                scale: 0.5,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.6,
+                delay: 0.5 + i * 0.08,
+                ease: "easeOut",
+              }}
+              className="absolute -translate-x-1/2 pointer-events-none"
+              style={{
+                left: `calc(50% + ${x}px)`,
+                top,
+              }}
+            >
+              <AppIcon
+                bg={bg}
+                kind={kind}
+              />
+            </motion.div>
+          ))}
+        </div>
       </section>
     </div>
   );
 }
-
-
-

@@ -14,7 +14,7 @@ import ArchitectureCTA from './ArchitectureCTA'
 
 const Home = () => {
   return (
-    <div className='bg-slate-50'>
+    <div className='bg-slate-50 xl:mt-0 lg:mt-0 md:mt-5 mt-8'>
       <HeroSection />
       <BrandSection />
       <Organization />
@@ -60,7 +60,7 @@ const BrandSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className='text-[#4F5674] text-center text-[30px]'
+          className='text-[#4F5674] text-center text-[22px] sm:text-[26px] lg:text-[30px]'
         >
           Brands that Trust Us
         </motion.h1>
@@ -70,30 +70,34 @@ const BrandSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className='flex justify-between mt-5'
+          className='flex flex-wrap justify-center sm:justify-between items-center gap-x-8 gap-y-6 mt-5'
         >
           <motion.img
             variants={brandItem}
             src={firstImg}
             alt=""
+            className='h-8 sm:h-10 lg:h-12 w-auto object-contain'
           />
 
           <motion.img
             variants={brandItem}
             src={secondImg}
             alt=""
+            className='h-8 sm:h-10 lg:h-12 w-auto object-contain'
           />
 
           <motion.img
             variants={brandItem}
             src={thirdImg}
             alt=""
+            className='h-8 sm:h-10 lg:h-12 w-auto object-contain'
           />
 
           <motion.img
             variants={brandItem}
             src={fourthImg}
             alt=""
+            className='h-8 sm:h-10 lg:h-12 w-auto object-contain'
           />
         </motion.div>
       </Wrapper>
