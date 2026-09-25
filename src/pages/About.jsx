@@ -21,28 +21,36 @@ const About = () => {
 const AboutHero = () => {
     return (
         <div>
-            <Wrapper className='mt-28'>
-                <p className='font-jet text-[#4C5DE8] uppercase font-medium'>
+            <Wrapper className='mt-23 sm:mt-24 lg:mt-28 px-4 sm:px-6'>
+                <p className='font-jet text-[#4C5DE8] uppercase font-medium text-sm sm:text-base'>
                     The Operating System for Emerging Enterprises
                 </p>
 
-                <h1 className='text-[48px] font-extrabold text-[#111320] w-2/3 leading-13 mt-4'>
+                <h1 className='text-[30px] sm:text-[38px] lg:text-[48px] font-extrabold text-[#111320] w-full md:w-2/3 leading-[1.15] lg:leading-13 mt-4'>
                     One unified platform to run any institution, industry, or scale.
                 </h1>
 
-                <p className='font-Dm mt-6 font-normal text-[#6B7290] w-2/4'>
+                <p className='font-Dm mt-6 font-normal text-[#6B7290] text-sm sm:text-base w-full sm:w-3/4 md:w-2/4'>
                     From high growth startups to multi-campus universities, teaching hospitals, and 
                     government ministries Cephas Suite replaces brittle, disconnected point apps with 
                     an AI-powered, single tenant capable ERP ecosystem.
                 </p>
 
-                <div className='mt-14 mb-5 grid grid-cols-4 border border-[#E5E7F0] rounded-lg overflow-hidden'>
-                    {stats.map((stat, index) => (
+                <div className='mt-10 sm:mt-14 mb-5 grid grid-cols-2 sm:grid-cols-4 border border-[#E5E7F0] rounded-lg overflow-hidden'>
+                    {stats.map((stat, index) => {
+                        const isLastCol = index === stats.length - 1
+                        const isLastRowMobile = index >= stats.length - 2
+                        const isRightColMobile = index % 2 === 0
+                        return (
                         <div
                             key={stat.label}
-                            className={`px-6 py-5 ${
-                                index !== stats.length - 1 ? 'border-r border-[#E5E7F0]' : ''
-                            }`}
+                            className={[
+                                'px-4 sm:px-6 py-4 sm:py-5 border-[#E5E7F0]',
+                                isLastRowMobile ? '' : 'border-b',
+                                isRightColMobile ? 'border-r' : '',
+                                'sm:border-b-0',
+                                isLastCol ? 'sm:border-r-0' : 'sm:border-r',
+                            ].join(' ')}
                         >
                             <p className='font-Dm font-bold text-[#4C5DE8] text-lg'>
                                 {stat.value}
@@ -51,7 +59,8 @@ const AboutHero = () => {
                                 {stat.label}
                             </p>
                         </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </Wrapper>
         </div>
@@ -68,23 +77,23 @@ const stats = [
 
 const SecuritySection = () => {
     return (
-        <div className='bg-[#F5F6FA] py-24'>
-            <Wrapper>
+        <div className='bg-[#F5F6FA] py-16 sm:py-20 lg:py-24'>
+            <Wrapper className='px-4 sm:px-6'>
                 <p className='font-jet text-[#4C5DE8] uppercase text-xs font-medium tracking-widest'>
                     Trust, Security & Compliance
                 </p>
 
-                <h2 className='text-[36px] font-extrabold text-[#111320] mt-4 w-2/3 leading-tight'>
+                <h2 className='text-[26px] sm:text-[30px] lg:text-[36px] font-extrabold text-[#111320] mt-4 w-full md:w-2/3 leading-tight'>
                     Enterprise-grade security, built for African regulatory realities.
                 </h2>
 
-                <div className='grid grid-cols-3 gap-6 mt-10'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mt-8 sm:mt-10'>
                     {features.map((feature) => (
                         <div
                             key={feature.title}
-                            className='bg-white border border-[#E5E7F0] rounded-xl p-6'
+                            className='bg-white border border-[#E5E7F0] rounded-xl p-5 sm:p-6'
                         >
-                            <div className='flex items-center justify-between'>
+                            <div className='flex items-center justify-between flex-wrap gap-2'>
                                 <p className='font-jet text-[#4C5DE8] uppercase text-[10px] font-medium tracking-wide'>
                                     {feature.tag}
                                 </p>

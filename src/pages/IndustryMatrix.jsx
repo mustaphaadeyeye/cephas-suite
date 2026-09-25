@@ -7,23 +7,23 @@ const IndustryMatrix = () => {
     const [openIndex, setOpenIndex] = useState(null)
 
     return (
-        <div className='bg-white py-24'>
-            <Wrapper>
+        <div className='bg-white py-16 sm:py-20 lg:py-24'>
+            <Wrapper className='px-4 sm:px-6'>
                 <p className='font-jet text-[#4C5DE8] uppercase text-xs font-medium tracking-widest'>
                     Industry Breakdown Matrix
                 </p>
 
-                <h2 className='text-[36px] font-extrabold text-[#111320] mt-4'>
+                <h2 className='text-[26px] sm:text-[30px] lg:text-[36px] font-extrabold text-[#111320] mt-4'>
                     Purpose-built editions for every sector.
                 </h2>
 
-                <p className='font-Dm text-[#6B7290] mt-4 w-1/2 leading-relaxed'>
+                <p className='font-Dm text-[#6B7290] mt-4 w-full sm:w-3/4 lg:w-1/2 leading-relaxed'>
                     Cephas Suite does not force a generic template onto specialized verticals. We
                     engineer distinct, purpose-built editions configured for unique compliance,
                     operational workflows, and end-user roles.
                 </p>
 
-                <div className='grid grid-cols-3 gap-4 mt-10'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8 sm:mt-10'>
                     {sectors.map((sector, index) => (
                         <button
                             key={sector.title}
@@ -32,7 +32,7 @@ const IndustryMatrix = () => {
                         >
                             <div className='flex items-center gap-3'>
                                 <div
-                                    className='w-9 h-9 rounded-md flex items-center justify-center'
+                                    className='w-9 h-9 shrink-0 rounded-md flex items-center justify-center'
                                     style={{ backgroundColor: `${sector.color}1A` }}
                                 >
                                     <sector.icon
@@ -53,7 +53,7 @@ const IndustryMatrix = () => {
                                 </div>
                             </div>
                             <ChevronDown
-                                className={`w-4 h-4 text-[#9AA0BC] transition-transform ${
+                                className={`w-4 h-4 shrink-0 text-[#9AA0BC] transition-transform ${
                                     openIndex === index ? 'rotate-180' : ''
                                 }`}
                             />

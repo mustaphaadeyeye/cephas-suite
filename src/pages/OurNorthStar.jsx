@@ -3,15 +3,15 @@ import Wrapper from '../components/Wrapper'
 
 const OurNorthStar = () => {
     return (
-        <div className='bg-[#0B0C17] py-24'>
-            <Wrapper>
-                <p className='font-jet text-[#6B7290] uppercase text-xs tracking-widest mb-10'>
+        <div className='bg-[#0B0C17] py-16 sm:py-20 lg:py-24'>
+            <Wrapper className='px-4 sm:px-6'>
+                <p className='font-jet text-[#6B7290] uppercase text-xs tracking-widest mb-8 sm:mb-10'>
                     Our North Star
                 </p>
 
                 {/* Vision / Mission */}
-                <div className='grid grid-cols-2 gap-6'>
-                    <div className='bg-[#171826] border border-[#262838] rounded-xl p-8'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6'>
+                    <div className='bg-[#171826] border border-[#262838] rounded-xl p-6 sm:p-8'>
                         <p className='font-jet text-[#4C5DE8] uppercase text-xs font-medium tracking-wide'>
                             Our Vision
                         </p>
@@ -20,7 +20,7 @@ const OurNorthStar = () => {
                         </p>
                     </div>
 
-                    <div className='bg-[#171826] border border-[#262838] rounded-xl p-8'>
+                    <div className='bg-[#171826] border border-[#262838] rounded-xl p-6 sm:p-8'>
                         <p className='font-jet text-[#4C5DE8] uppercase text-xs font-medium tracking-wide'>
                             Our Mission
                         </p>
@@ -31,7 +31,7 @@ const OurNorthStar = () => {
                 </div>
 
                 {/* Feature cards */}
-                <div className='grid grid-cols-3 gap-6 mt-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mt-5 sm:mt-6'>
                     {pillars.map((item) => (
                         <div
                             key={item.title}

@@ -66,7 +66,7 @@ function SegmentCard({ segment }) {
   const theme = THEMES[segment.theme];
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 flex flex-col h-full">
+    <div className="rounded-xl border border-gray-200 bg-white p-5 sm:p-6 flex flex-col h-full">
       <span className="text-2xl mb-4" aria-hidden="true">
         {segment.icon}
       </span>
@@ -109,8 +109,8 @@ function SegmentCard({ segment }) {
 export default function CustomerSegments() {
   return (
     <div className="mt-8">
-        <Wrapper>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Wrapper className="px-4 sm:px-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
         {SEGMENTS.map((segment) => (
           <SegmentCard key={segment.title} segment={segment} />
         ))}
