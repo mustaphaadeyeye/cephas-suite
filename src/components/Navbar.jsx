@@ -45,8 +45,8 @@ const Navbar = () => {
               alt="CepahsHR"
               className="h-10 w-auto object-contain"
             />
-          </NavLink>
             <h1 className="text-[#111320] font-black text-[16px]">Cephas Suite</h1>
+          </NavLink>
           </div>
 
           {/* Desktop Navigation */}
