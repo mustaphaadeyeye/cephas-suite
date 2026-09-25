@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Wrapper from "../components/Wrapper";
 
 const CATEGORIES = [
@@ -262,35 +263,45 @@ function Sidebar({ activeId, onNavigate }) {
           className="w-full flex items-center justify-between text-sm font-semibold text-gray-900 py-2"
         >
           Apps
-          <svg
-            className={`h-4 w-4 text-gray-400 transition-transform ${appsOpen ? "rotate-180" : ""}`}
+          <motion.svg
+            className="h-4 w-4 text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
+            animate={{ rotate: appsOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+          </motion.svg>
         </button>
 
-        {appsOpen && (
-          <ul className="mt-1 space-y-1">
-            {CATEGORIES.map((cat) => (
-              <li key={cat.id}>
-                <button
-                  type="button"
-                  onClick={() => onNavigate(cat.id)}
-                  className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
-                    activeId === cat.id
-                      ? "bg-indigo-50 text-indigo-700 font-medium"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <AnimatePresence initial={false}>
+          {appsOpen && (
+            <motion.ul
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="mt-1 space-y-1 overflow-hidden"
+            >
+              {CATEGORIES.map((cat) => (
+                <li key={cat.id} className="list-none">
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(cat.id)}
+                    className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
+                      activeId === cat.id
+                        ? "bg-indigo-50 text-indigo-700 font-medium"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                </li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="mt-6">
@@ -326,10 +337,11 @@ function MobileNav({ activeId, onNavigate }) {
     <div className="md:hidden -mx-4 px-4 mb-6 sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-gray-100">
       <div className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
         {items.map((item) => (
-          <button
+          <motion.button
             key={item.id}
             type="button"
             onClick={() => onNavigate(item.id)}
+            whileTap={{ scale: 0.94 }}
             className={`shrink-0 whitespace-nowrap text-sm px-3 py-1.5 rounded-full border transition-colors ${
               activeId === item.id
                 ? "bg-indigo-600 text-white border-indigo-600"
@@ -337,7 +349,7 @@ function MobileNav({ activeId, onNavigate }) {
             }`}
           >
             {item.label}
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>
@@ -346,9 +358,26 @@ function MobileNav({ activeId, onNavigate }) {
 
 // ---- Card -------------------------------------------------------------
 
-function AppCard({ app }) {
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, delay: i * 0.08, ease: "easeOut" },
+  }),
+};
+
+function AppCard({ app, index }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 flex flex-col">
+    <motion.div
+      custom={index}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={cardVariants}
+      whileHover={{ y: -4, boxShadow: "0 10px 25px -5px rgba(0,0,0,0.08)" }}
+      className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 flex flex-col"
+    >
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${TAG_STYLES[app.tag] || "bg-gray-100 text-gray-700"}`}>
           {app.tag}
@@ -374,7 +403,9 @@ function AppCard({ app }) {
         ))}
       </ul>
 
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         type="button"
         className="mt-auto w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 flex items-center justify-center gap-1.5 transition-colors"
       >
@@ -382,8 +413,8 @@ function AppCard({ app }) {
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 }
 
@@ -391,23 +422,37 @@ function AppCard({ app }) {
 
 function CategorySection({ category }) {
   return (
-    <section id={category.id} className="scroll-mt-24 mb-10 sm:mb-14">
+    <motion.section
+      id={category.id}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 0.4 }}
+      className="scroll-mt-24 mb-10 sm:mb-14"
+    >
       <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{category.label}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-        {category.apps.map((app) => (
-          <AppCard key={app.name + category.id} app={app} />
+        {category.apps.map((app, i) => (
+          <AppCard key={app.name + category.id} app={app} index={i} />
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 }
 
 function SuiteSection({ suite }) {
   return (
-    <section id={suite.id} className="scroll-mt-24 mb-10 sm:mb-14">
+    <motion.section
+      id={suite.id}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 0.4 }}
+      className="scroll-mt-24 mb-10 sm:mb-14"
+    >
       <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{suite.label}</h2>
       <p className="text-sm text-gray-500">No apps in this suite yet.</p>
-    </section>
+    </motion.section>
   );
 }
 

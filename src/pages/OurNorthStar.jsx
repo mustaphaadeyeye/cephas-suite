@@ -1,40 +1,64 @@
 import { GraduationCap, HeartPulse, Landmark, Fuel, Factory, Users, ChevronDown } from 'lucide-react'
+import { motion } from 'framer-motion'
 import Wrapper from '../components/Wrapper'
 
 const OurNorthStar = () => {
     return (
         <div className='bg-[#0B0C17] py-16 sm:py-20 lg:py-24'>
             <Wrapper className='px-4 sm:px-6'>
-                <p className='font-jet text-[#6B7290] uppercase text-xs tracking-widest mb-8 sm:mb-10'>
+                <motion.p
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.4 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className='font-jet text-[#6B7290] uppercase text-xs tracking-widest mb-8 sm:mb-10'
+                >
                     Our North Star
-                </p>
+                </motion.p>
 
                 {/* Vision / Mission */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6'>
-                    <div className='bg-[#171826] border border-[#262838] rounded-xl p-6 sm:p-8'>
+                    <motion.div
+                        initial={{ opacity: 0, x: -24 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
+                        className='bg-[#171826] border border-[#262838] rounded-xl p-6 sm:p-8'
+                    >
                         <p className='font-jet text-[#4C5DE8] uppercase text-xs font-medium tracking-wide'>
                             Our Vision
                         </p>
                         <p className='font-Dm text-white mt-4 leading-relaxed'>
                             To become Africa's leading enterprise software platform powering businesses, institutions, governments, schools, hospitals, and complex industries.
                         </p>
-                    </div>
+                    </motion.div>
 
-                    <div className='bg-[#171826] border border-[#262838] rounded-xl p-6 sm:p-8'>
+                    <motion.div
+                        initial={{ opacity: 0, x: 24 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true, amount: 0.3 }}
+                        transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
+                        className='bg-[#171826] border border-[#262838] rounded-xl p-6 sm:p-8'
+                    >
                         <p className='font-jet text-[#4C5DE8] uppercase text-xs font-medium tracking-wide'>
                             Our Mission
                         </p>
                         <p className='font-Dm text-white mt-4 leading-relaxed'>
                             To simplify organizational management through intelligent automation, AI-powered decision making, and deeply integrated digital transformation.
                         </p>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Feature cards */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mt-5 sm:mt-6'>
-                    {pillars.map((item) => (
-                        <div
+                    {pillars.map((item, index) => (
+                        <motion.div
                             key={item.title}
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.2 }}
+                            transition={{ duration: 0.45, delay: index * 0.1, ease: 'easeOut' }}
+                            whileHover={{ y: -4, borderColor: '#4C5DE8' }}
                             className='bg-[#171826] border border-[#262838] rounded-xl p-6'
                         >
                             <div className='w-9 h-9 rounded-md bg-[#4C5DE8]/10 flex items-center justify-center'>
@@ -46,7 +70,7 @@ const OurNorthStar = () => {
                             <p className='font-Dm text-[#6B7290] text-sm mt-2 leading-relaxed'>
                                 {item.description}
                             </p>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             </Wrapper>

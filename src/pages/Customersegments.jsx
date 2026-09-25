@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import Wrapper from "../components/Wrapper";
 
 
@@ -62,14 +63,38 @@ const SEGMENTS = [
 
 // ---- Card -------------------------------------------------------------
 
-function SegmentCard({ segment }) {
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.45, delay: i * 0.1, ease: "easeOut" },
+  }),
+};
+
+function SegmentCard({ segment, index }) {
   const theme = THEMES[segment.theme];
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 sm:p-6 flex flex-col h-full">
-      <span className="text-2xl mb-4" aria-hidden="true">
+    <motion.div
+      custom={index}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={cardVariants}
+      whileHover={{ y: -6, boxShadow: "0 12px 28px -6px rgba(0,0,0,0.1)" }}
+      className="rounded-xl border border-gray-200 bg-white p-5 sm:p-6 flex flex-col h-full"
+    >
+      <motion.span
+        className="text-2xl mb-4"
+        aria-hidden="true"
+        initial={{ scale: 0, rotate: -20 }}
+        whileInView={{ scale: 1, rotate: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: index * 0.1 + 0.15, type: "spring", stiffness: 200 }}
+      >
         {segment.icon}
-      </span>
+      </motion.span>
 
       <h3 className="font-semibold text-gray-900 mb-1">{segment.title}</h3>
       <p className={`text-xs font-semibold tracking-wide mb-3 ${theme.badge}`}>
@@ -100,7 +125,7 @@ function SegmentCard({ segment }) {
         </svg>
         <p className={`text-sm font-medium ${theme.calloutText}`}>{segment.callout}</p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -111,8 +136,8 @@ export default function CustomerSegments() {
     <div className="mt-8">
         <Wrapper className="px-4 sm:px-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-        {SEGMENTS.map((segment) => (
-          <SegmentCard key={segment.title} segment={segment} />
+        {SEGMENTS.map((segment, i) => (
+          <SegmentCard key={segment.title} segment={segment} index={i} />
         ))}
       </div>
       </Wrapper>
