@@ -4,7 +4,7 @@ import AppsSidebar from './Appssidebar'
 
 const Product = () => {
   return (
-    <div>
+    <div className=''>
       <ProductHero />
       <AppsSidebar />
     </div>
@@ -13,12 +13,12 @@ const Product = () => {
 
 const ProductHero = () => {
   return (
-    <Wrapper className='mt-30'>
-      <h1 className='mx-auto w-4/5 text-black text-center text-[80px] font-extrabold leading-20'>
+    <Wrapper className='mt-22 sm:mt-20 lg:mt-30 px-4 sm:px-6'>
+      <h1 className='mx-auto w-full sm:w-4/5 text-black text-center text-[36px] sm:text-[52px] md:text-[64px] lg:text-[80px] font-extrabold leading-[1.1] lg:leading-20'>
         Explore the Cephas Software Ecosystem
       </h1>
 
-      <p className='text-[#4F5674] font-normal text-[17px] mx-auto w-1/2 text-center mt-2'>
+      <p className='text-[#4F5674] font-normal text-[15px] sm:text-[16px] lg:text-[17px] mx-auto w-full sm:w-3/4 lg:w-1/2 text-center mt-3 sm:mt-2'>
         Deploy modular point solutions to eliminate specific operational bottlenecks,
         or activate unified multi-app suites configured for automated cross-departmental
         data sync.

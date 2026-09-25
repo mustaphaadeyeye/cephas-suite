@@ -248,7 +248,7 @@ const TAG_STYLES = {
   MARKETING: "bg-amber-50 text-amber-700",
 };
 
-// ---- Sidebar ---------------------------------------------------------------
+// ---- Sidebar (desktop, md and up) -----------------------------------------
 
 function Sidebar({ activeId, onNavigate }) {
   const [appsOpen, setAppsOpen] = useState(true);
@@ -317,12 +317,39 @@ function Sidebar({ activeId, onNavigate }) {
   );
 }
 
+// ---- Mobile nav (below md): horizontally scrollable pill tabs -------------
+
+function MobileNav({ activeId, onNavigate }) {
+  const items = [...CATEGORIES, ...SUITES];
+
+  return (
+    <div className="md:hidden -mx-4 px-4 mb-6 sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-gray-100">
+      <div className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => onNavigate(item.id)}
+            className={`shrink-0 whitespace-nowrap text-sm px-3 py-1.5 rounded-full border transition-colors ${
+              activeId === item.id
+                ? "bg-indigo-600 text-white border-indigo-600"
+                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+            }`}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ---- Card -------------------------------------------------------------
 
 function AppCard({ app }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 flex flex-col">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 flex flex-col">
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${TAG_STYLES[app.tag] || "bg-gray-100 text-gray-700"}`}>
           {app.tag}
         </span>
@@ -364,9 +391,9 @@ function AppCard({ app }) {
 
 function CategorySection({ category }) {
   return (
-    <section id={category.id} className="scroll-mt-24 mb-14">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">{category.label}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <section id={category.id} className="scroll-mt-24 mb-10 sm:mb-14">
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{category.label}</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {category.apps.map((app) => (
           <AppCard key={app.name + category.id} app={app} />
         ))}
@@ -377,8 +404,8 @@ function CategorySection({ category }) {
 
 function SuiteSection({ suite }) {
   return (
-    <section id={suite.id} className="scroll-mt-24 mb-14">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">{suite.label}</h2>
+    <section id={suite.id} className="scroll-mt-24 mb-10 sm:mb-14">
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{suite.label}</h2>
       <p className="text-sm text-gray-500">No apps in this suite yet.</p>
     </section>
   );
@@ -395,9 +422,10 @@ export default function AppsSidebar() {
   };
 
   return (
-    <Wrapper className="flex py-8">
+    <Wrapper className="flex flex-col md:flex-row py-6 sm:py-8">
       <Sidebar activeId={activeId} onNavigate={handleNavigate} />
       <div className="flex-1 min-w-0">
+        <MobileNav activeId={activeId} onNavigate={handleNavigate} />
         {CATEGORIES.map((cat) => (
           <CategorySection key={cat.id} category={cat} />
         ))}
