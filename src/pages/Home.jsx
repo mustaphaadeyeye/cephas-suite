@@ -16,7 +16,7 @@ const Home = () => {
   return (
     <div className='bg-slate-50 xl:mt-0 lg:mt-0 md:mt-5 mt-8'>
       <HeroSection />
-      <BrandSection />
+      {/* <BrandSection /> */}
       <Organization />
       <BusinessSection />
       <IndustrySolutions />

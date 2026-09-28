@@ -1,5 +1,12 @@
 import { FiArrowRight, FiCloud, FiShield, FiZap } from "react-icons/fi";
-import { motion } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 /* ------------------------------------------------------------------
    IMAGES
@@ -10,6 +17,25 @@ const imgCephasHrBrandmarkJpg1 = `${assetPathPrefix}/fd7e3.png`;
 const imgGeminiGenerated = `${assetPathPrefix}/9135b.png`;
 const imgVector23 = `${assetPathPrefix}/8b68e.svg`;
 const imgLogoMark1 = `${assetPathPrefix}/0c974.svg`;
+
+/* Shared easing for a smooth, professional feel */
+const EASE = [0.22, 1, 0.36, 1];
+
+/* ------------------------------------------------------------------
+   Scroll helpers
+   progress = 0 at the top of the page, 1 once the hero has fully
+   scrolled out of view. Both helpers do nothing when the visitor
+   prefers reduced motion.
+------------------------------------------------------------------- */
+function useParallax(progress, distance) {
+  const reduceMotion = useReducedMotion();
+  return useTransform(progress, [0, 1], [0, reduceMotion ? 0 : distance]);
+}
+
+function useFade(progress, start, end) {
+  const reduceMotion = useReducedMotion();
+  return useTransform(progress, [start, end], [1, reduceMotion ? 1 : 0]);
+}
 
 /* ------------------------------------------------------------------
    Small reusable pieces
@@ -99,12 +125,20 @@ const heroBadges = [
 const FAN_ENDS = [-210, -130, -60, 60, 130, 210];
 const FAN_REACH = 1000;
 
-function HeroLines() {
+/* ------------------------------------------------------------------
+   Hero connection lines (draw in, then fade gently as you scroll)
+------------------------------------------------------------------- */
+function HeroLines({ progress }) {
+  const reduceMotion = useReducedMotion();
+  const opacity = useFade(progress, 0.1, 0.7);
   const cx = hub.x;
   const cy = hub.top + ICON_HALF;
 
   return (
-    <div className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none hidden lg:block">
+    <motion.div
+      style={{ opacity }}
+      className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none hidden lg:block"
+    >
       <svg
         width="1"
         height="1"
@@ -120,16 +154,8 @@ function HeroLines() {
             x2={cx + FAN_REACH}
             y2="0"
           >
-            <stop
-              offset="0"
-              stopColor="#4c5de8"
-              stopOpacity="0.85"
-            />
-            <stop
-              offset="1"
-              stopColor="#4c5de8"
-              stopOpacity="0.3"
-            />
+            <stop offset="0" stopColor="#4c5de8" stopOpacity="0.85" />
+            <stop offset="1" stopColor="#4c5de8" stopOpacity="0.3" />
           </linearGradient>
 
           <linearGradient
@@ -140,16 +166,8 @@ function HeroLines() {
             x2={cx - FAN_REACH}
             y2="0"
           >
-            <stop
-              offset="0"
-              stopColor="#4c5de8"
-              stopOpacity="0.85"
-            />
-            <stop
-              offset="1"
-              stopColor="#4c5de8"
-              stopOpacity="0.3"
-            />
+            <stop offset="0" stopColor="#4c5de8" stopOpacity="0.85" />
+            <stop offset="1" stopColor="#4c5de8" stopOpacity="0.3" />
           </linearGradient>
         </defs>
 
@@ -158,35 +176,247 @@ function HeroLines() {
             const ty = cy + dy;
 
             return (
-              <path
+              <motion.path
                 key={`${dir}-${i}`}
                 d={`M ${cx} ${cy} C ${cx + dir * 260} ${cy}, ${cx + dir * 480} ${ty}, ${cx + dir * FAN_REACH} ${ty}`}
                 fill="none"
-                stroke={
-                  dir === 1
-                    ? "url(#fanRight)"
-                    : "url(#fanLeft)"
-                }
+                stroke={dir === 1 ? "url(#fanRight)" : "url(#fanLeft)"}
                 strokeWidth="1"
+                initial={
+                  reduceMotion ? false : { pathLength: 0, opacity: 0 }
+                }
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{
+                  pathLength: {
+                    duration: 1.6,
+                    delay: 0.9 + i * 0.06,
+                    ease: EASE,
+                  },
+                  opacity: {
+                    duration: 0.4,
+                    delay: 0.9 + i * 0.06,
+                  },
+                }}
               />
             );
           })
         )}
       </svg>
-    </div>
+    </motion.div>
   );
+}
+
+/* ------------------------------------------------------------------
+   Badges marquee (moves horizontally on all screen sizes)
+------------------------------------------------------------------- */
+const COPIES = 4;
+const SPEED = 40; // pixels per second
+
+function HeroBadgesMarquee({ heroBadges }) {
+  const reduceMotion = useReducedMotion();
+  const copyRef = useRef(null);
+  const [copyWidth, setCopyWidth] = useState(0);
+
+  useEffect(() => {
+    const el = copyRef.current;
+    if (!el) return;
+    const measure = () => setCopyWidth(el.offsetWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [heroBadges]);
+
+  /* Accessibility: users who prefer reduced motion get a static row */
+  if (reduceMotion) {
+    return (
+      <div className="mt-8 sm:mt-10 flex flex-wrap justify-center gap-x-[28px] gap-y-3 items-center px-4">
+        {heroBadges.map(({ Icon, label }) => (
+          <div key={label} className="flex gap-[7px] items-center">
+            <Icon className="shrink-0 text-[#4c5de8]" size={16} />
+            <span className="font-['DM_Sans'] font-medium leading-[19.5px] text-[#4f5674] text-[13px] whitespace-nowrap">
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.5, ease: EASE }}
+      className="mt-8 sm:mt-10 w-full overflow-hidden [-webkit-mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
+    >
+      <motion.div
+        className="flex w-max will-change-transform"
+        animate={copyWidth ? { x: [0, -copyWidth] } : { x: 0 }}
+        transition={{
+          duration: copyWidth ? copyWidth / SPEED : 0,
+          ease: "linear",
+          repeat: Infinity,
+          repeatType: "loop",
+        }}
+      >
+        {Array.from({ length: COPIES }).map((_, copy) => (
+          <div
+            key={copy}
+            ref={copy === 0 ? copyRef : null}
+            aria-hidden={copy > 0}
+            className="flex shrink-0 items-center gap-x-[28px] pr-[28px]"
+          >
+            {heroBadges.map(({ Icon, label }) => (
+              <div key={label} className="flex gap-[7px] items-center">
+                <Icon className="shrink-0 text-[#4c5de8]" size={16} />
+                <span className="font-['DM_Sans'] font-medium leading-[19.5px] text-[#4f5674] text-[13px] whitespace-nowrap">
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   Headline: words rise in on load, ripple with a gentle wave while
+   idle, then fill with brand blue one by one as you scroll
+------------------------------------------------------------------- */
+const HEADLINE_CLASS =
+  "font-['Bricolage_Grotesque'] font-extrabold leading-[1.1] lg:leading-[78px] text-[#111320] text-[36px] sm:text-[52px] md:text-[64px] lg:text-[80px] text-center tracking-[-1px] lg:tracking-[-2px] max-w-[978px]";
+
+function HeadlineWord({ word, index, progress }) {
+  /* Scroll: drifts up a little, turns brand blue in sequence, then fades */
+  const y = useParallax(progress, -(30 + index * 14));
+  const color = useTransform(
+    progress,
+    [0.02 + index * 0.03, 0.2 + index * 0.03],
+    ["#111320", "#4c5de8"]
+  );
+  const opacity = useFade(progress, 0.45 + index * 0.02, 0.75 + index * 0.02);
+
+  return (
+    /* Scroll layer sits OUTSIDE the mask so words can travel freely */
+    <motion.span
+      style={{ y, opacity }}
+      aria-hidden="true"
+      className="inline-block will-change-transform"
+    >
+      {/* Idle wave: a soft bob rolls through the sentence, word by word */}
+      <motion.span
+        className="inline-block will-change-transform"
+        animate={{ y: [0, -5, 0] }}
+        transition={{
+          duration: 3.6,
+          delay: 1.4 + index * 0.16,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatDelay: 0.6,
+        }}
+      >
+        {/* Mask so each word slides up from behind a clean edge on load.
+            Padding/negative margin keep descenders from being clipped. */}
+        <span className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]">
+          <motion.span
+            className="inline-block will-change-transform"
+            style={{ color }}
+            variants={{
+              hidden: { y: "110%", opacity: 0 },
+              visible: {
+                y: "0%",
+                opacity: 1,
+                transition: { duration: 0.8, ease: EASE },
+              },
+            }}
+          >
+            {word}
+          </motion.span>
+        </span>
+      </motion.span>
+    </motion.span>
+  );
+}
+
+function AnimatedHeadline({ text, progress }) {
+  const reduceMotion = useReducedMotion();
+
+  if (reduceMotion) {
+    return <p className={HEADLINE_CLASS}>{text}</p>;
+  }
+
+  const words = text.split(" ");
+
+  return (
+    <motion.p
+      aria-label={text}
+      className={HEADLINE_CLASS}
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: {},
+        visible: {
+          transition: { staggerChildren: 0.09, delayChildren: 0.1 },
+        },
+      }}
+    >
+      {words.map((word, i) => (
+        <Fragment key={`${word}-${i}`}>
+          <HeadlineWord word={word} index={i} progress={progress} />
+          {i < words.length - 1 ? " " : null}
+        </Fragment>
+      ))}
+    </motion.p>
+  );
+}
+
+/* Wrapper that moves and fades a block of content as you scroll */
+function ScrollLayer({ progress, distance, fadeStart, fadeEnd, className, children }) {
+  const y = useParallax(progress, distance);
+  const opacity = useFade(progress, fadeStart, fadeEnd);
+
+  return (
+    <motion.div style={{ y, opacity }} className={className}>
+      {children}
+    </motion.div>
+  );
+}
+
+/* Wrapper that gives each floating icon its own parallax speed */
+function IconParallax({ progress, distance, children }) {
+  const y = useParallax(progress, distance);
+  return <motion.div style={{ y }}>{children}</motion.div>;
 }
 
 /* ------------------------------------------------------------------
    Page
 ------------------------------------------------------------------- */
 export default function Home() {
+  const reduceMotion = useReducedMotion();
+  const sectionRef = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  /* Smoothed so scroll effects glide instead of jittering */
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 110,
+    damping: 28,
+    mass: 0.4,
+  });
+
   return (
     <div className="bg-[#fafbff] w-full overflow-x-hidden">
       <section
+        ref={sectionRef}
         className="relative w-full overflow-hidden min-h-[640px] sm:min-h-[720px] lg:min-h-[879px]"
       >
-        <HeroLines />
+        <HeroLines progress={progress} />
 
         {/* Vector line decoration */}
         <motion.div
@@ -207,91 +437,89 @@ export default function Home() {
         {/* Hero content */}
         <div className="max-w-[1280px] mx-auto px-6 sm:px-10 lg:px-20 pt-16 sm:pt-20 lg:pt-[100px] flex flex-col items-center">
 
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.8,
-              ease: "easeOut",
-            }}
-            className="flex flex-col items-center w-full"
+          <div className="flex flex-col items-center w-full">
+            <AnimatedHeadline
+              text="Run your entire enterprise on one operational engine."
+              progress={progress}
+            />
+          </div>
+
+          <ScrollLayer
+            progress={progress}
+            distance={-70}
+            fadeStart={0.12}
+            fadeEnd={0.42}
+            className="flex justify-center"
           >
-            <p className="font-['Bricolage_Grotesque'] font-extrabold leading-[1.1] lg:leading-[78px] text-[#111320] text-[36px] sm:text-[52px] md:text-[64px] lg:text-[80px] text-center tracking-[-1px] lg:tracking-[-2px] max-w-[978px]">
-              Run your entire enterprise on one operational engine.
-            </p>
-          </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.7,
+                delay: 0.2,
+                ease: EASE,
+              }}
+              className="mt-4 sm:mt-5 font-['DM_Sans'] font-normal leading-[1.55] lg:leading-[28.05px] text-[#4f5674] text-[15px] sm:text-[16px] lg:text-[17px] text-center max-w-[580px]"
+            >
+              Deploy precision point apps to resolve immediate bottlenecks, or activate complete multi-department suites under a single login, unified database, and consolidated invoice.
+            </motion.p>
+          </ScrollLayer>
 
-          <motion.p
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.7,
-              delay: 0.2,
-              ease: "easeOut",
-            }}
-            className="mt-4 sm:mt-5 font-['DM_Sans'] font-normal leading-[1.55] lg:leading-[28.05px] text-[#4f5674] text-[15px] sm:text-[16px] lg:text-[17px] text-center max-w-[580px]"
+          <ScrollLayer
+            progress={progress}
+            distance={-50}
+            fadeStart={0.18}
+            fadeEnd={0.5}
+            className="w-full sm:w-auto flex justify-center"
           >
-            Deploy precision point apps to resolve immediate bottlenecks, or activate complete multi-department suites under a single login, unified database, and consolidated invoice.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.35,
-            }}
-            className="mt-7 sm:mt-9 flex flex-col sm:flex-row gap-[12px] items-center w-full sm:w-auto px-4 sm:px-0"
-          >
-            <button className="bg-[#4c5de8] flex gap-[7px] items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[#3d4ed9] transition-colors w-full sm:w-auto">
-              <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[14px] text-center text-white tracking-[-0.14px] whitespace-nowrap">
-                Explore Standalone Apps
-              </span>
-
-              <FiArrowRight
-                className="shrink-0 text-white"
-                size={14}
-              />
-            </button>
-
-            <button className="border border-[#4f5674] flex items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[rgba(79,86,116,0.05)] transition-colors w-full sm:w-auto">
-              <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[#4f5674] text-[14px] text-center tracking-[-0.14px] whitespace-nowrap">
-                Browse Integrated Suites
-              </span>
-            </button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.6,
-              delay: 0.5,
-            }}
-            className="mt-8 sm:mt-10 flex flex-wrap justify-center gap-x-[28px] gap-y-3 items-center px-4"
-          >
-            {heroBadges.map(({ Icon, label }, index) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.4,
-                  delay: 0.55 + index * 0.1,
-                }}
-                className="flex gap-[7px] items-center"
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.35,
+                ease: EASE,
+              }}
+              className="mt-7 sm:mt-9 flex flex-col sm:flex-row gap-[12px] items-center w-full sm:w-auto px-4 sm:px-0"
+            >
+              <motion.button
+                whileHover={reduceMotion ? undefined : { y: -2 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                transition={{ duration: 0.2, ease: EASE }}
+                className="group bg-[#4c5de8] flex gap-[7px] items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[#3d4ed9] transition-colors w-full sm:w-auto"
               >
-                <Icon
-                  className="shrink-0 text-[#4c5de8]"
-                  size={16}
-                />
-
-                <span className="font-['DM_Sans'] font-medium leading-[19.5px] text-[#4f5674] text-[13px] whitespace-nowrap">
-                  {label}
+                <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[14px] text-center text-white tracking-[-0.14px] whitespace-nowrap">
+                  Explore Standalone Apps
                 </span>
-              </motion.div>
-            ))}
-          </motion.div>
+
+                <FiArrowRight
+                  className="shrink-0 text-white transition-transform duration-200 group-hover:translate-x-1"
+                  size={14}
+                />
+              </motion.button>
+
+              <motion.button
+                whileHover={reduceMotion ? undefined : { y: -2 }}
+                whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                transition={{ duration: 0.2, ease: EASE }}
+                className="border border-[#4f5674] flex items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[rgba(79,86,116,0.05)] transition-colors w-full sm:w-auto"
+              >
+                <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[#4f5674] text-[14px] text-center tracking-[-0.14px] whitespace-nowrap">
+                  Browse Integrated Suites
+                </span>
+              </motion.button>
+            </motion.div>
+          </ScrollLayer>
+
+          <ScrollLayer
+            progress={progress}
+            distance={-30}
+            fadeStart={0.25}
+            fadeEnd={0.6}
+            className="w-full"
+          >
+            <HeroBadgesMarquee heroBadges={heroBadges} />
+          </ScrollLayer>
         </div>
 
         {/* Floating app icons — decorative; hidden below lg since their
@@ -299,34 +527,50 @@ export default function Home() {
             would overflow or overlap the content on narrower viewports */}
         <div className="hidden lg:block">
           {floatingIcons.map(({ x, top, bg, kind }, i) => (
-            <motion.div
+            /* Outer div handles positioning only, so Framer's transforms
+               never clash with the -translate-x-1/2 centering class */
+            <div
               key={i}
-              initial={{
-                opacity: 0,
-                scale: 0.5,
-                y: 20,
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                y: 0,
-              }}
-              transition={{
-                duration: 0.6,
-                delay: 0.5 + i * 0.08,
-                ease: "easeOut",
-              }}
               className="absolute -translate-x-1/2 pointer-events-none"
               style={{
                 left: `calc(50% + ${x}px)`,
                 top,
               }}
             >
-              <AppIcon
-                bg={bg}
-                kind={kind}
-              />
-            </motion.div>
+              {/* Each icon drifts up at its own speed while you scroll */}
+              <IconParallax progress={progress} distance={-(50 + (i % 4) * 35)}>
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    scale: 0.5,
+                    y: 20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    duration: 0.7,
+                    delay: 0.5 + i * 0.08,
+                    ease: EASE,
+                  }}
+                >
+                  {/* Gentle idle float, each icon slightly out of sync */}
+                  <motion.div
+                    animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
+                    transition={{
+                      duration: 4 + (i % 3) * 0.6,
+                      delay: 1.6 + i * 0.15,
+                      ease: "easeInOut",
+                      repeat: Infinity,
+                    }}
+                  >
+                    <AppIcon bg={bg} kind={kind} />
+                  </motion.div>
+                </motion.div>
+              </IconParallax>
+            </div>
           ))}
         </div>
       </section>
