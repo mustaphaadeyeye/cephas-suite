@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Wrapper from "../components/Wrapper";
 
@@ -228,17 +228,140 @@ const SUITES = [
   { id: "cephas-book", label: "Cephas Book" },
 ];
 
-// Height of your fixed/sticky navbar in px. Adjust to match your real navbar,
-// or set to 0 if you don't have one.
-const SCROLL_OFFSET = 88;
+const ALL_SECTION_IDS = [...CATEGORIES, ...SUITES].map((s) => s.id);
+
+// ---- Layout constants (adjust to match your real layout) -------------------
+
+// Height of your fixed navbar in px. Set to 0 if you don't have one.
+const NAVBAR_HEIGHT = 88;
+
+// Fallback height of the pinned pill bar on mobile (it is measured for real).
+const MOBILE_NAV_HEIGHT = 56;
+
+// Tailwind's `md` breakpoint.
+const MD_BREAKPOINT = 768;
+
+// How far below the top of the screen a section heading should land.
+function getScrollOffset() {
+  const isMobile = window.innerWidth < MD_BREAKPOINT;
+  return isMobile ? NAVBAR_HEIGHT + MOBILE_NAV_HEIGHT + 12 : NAVBAR_HEIGHT + 16;
+}
 
 // ---- Scroll helper --------------------------------------------------------
 
 function scrollToSection(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  const y = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+  const y = el.getBoundingClientRect().top + window.scrollY - getScrollOffset();
   window.scrollTo({ top: y, behavior: "smooth" });
+}
+
+// ---- Scroll-spy: highlights the section currently in view ------------------
+
+function useScrollSpy(ids, onChange, lockRef) {
+  useEffect(() => {
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      // Ignore while a click-initiated smooth scroll is still travelling
+      if (Date.now() < lockRef.current) return;
+
+      const offset = getScrollOffset() + 8;
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 4;
+
+      let current = ids[0];
+      if (atBottom) {
+        current = ids[ids.length - 1];
+      } else {
+        for (const id of ids) {
+          const el = document.getElementById(id);
+          if (el && el.getBoundingClientRect().top <= offset) current = id;
+        }
+      }
+      onChange(current);
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [ids, onChange, lockRef]);
+}
+
+// ---- "Stick while scrolling" hook -------------------------------------------
+// Uses position: fixed (computed from scroll position) instead of CSS sticky,
+// so it keeps working even if a parent has overflow hidden/auto.
+
+function useStuck({ slotRef, boundaryRef, itemRef, top, fullWidth = false }) {
+  const [style, setStyle] = useState(null); // null = normal, in-flow position
+
+  useEffect(() => {
+    let ticking = false;
+
+    const update = () => {
+      ticking = false;
+      const slot = slotRef.current;
+      const boundary = boundaryRef.current;
+      const item = itemRef.current;
+      if (!slot || !boundary || !item) return;
+
+      const s = slot.getBoundingClientRect();
+
+      // Hasn't reached its pinning point yet
+      if (s.top > top) {
+        setStyle((prev) => (prev === null ? prev : null));
+        return;
+      }
+
+      // Pin it, but let it leave with the content instead of overlapping
+      // whatever comes after (footer etc.)
+      const b = boundary.getBoundingClientRect();
+      const t = Math.min(top, b.bottom - item.offsetHeight);
+
+      const next = fullWidth
+        ? { position: "fixed", top: t, left: 0, right: 0 }
+        : { position: "fixed", top: t, left: s.left, width: s.width };
+
+      setStyle((prev) =>
+        prev &&
+        prev.top === next.top &&
+        prev.left === next.left &&
+        prev.width === next.width
+          ? prev
+          : next
+      );
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [slotRef, boundaryRef, itemRef, top, fullWidth]);
+
+  return style;
 }
 
 // ---- Tag badge colors -----------------------------------------------------
@@ -249,108 +372,176 @@ const TAG_STYLES = {
   MARKETING: "bg-amber-50 text-amber-700",
 };
 
-// ---- Sidebar (desktop, md and up) -----------------------------------------
+// ---- Sidebar (desktop, md and up) — stays fixed while you scroll ------------
 
-function Sidebar({ activeId, onNavigate }) {
+function Sidebar({ activeId, onNavigate, boundaryRef }) {
   const [appsOpen, setAppsOpen] = useState(true);
+  const slotRef = useRef(null);
+  const navRef = useRef(null);
+
+  const stuck = useStuck({
+    slotRef,
+    boundaryRef,
+    itemRef: navRef,
+    top: NAVBAR_HEIGHT + 16,
+  });
 
   return (
-    <nav className="w-56 shrink-0 pr-6 hidden md:block">
-      <div>
-        <button
-          type="button"
-          onClick={() => setAppsOpen((v) => !v)}
-          className="w-full flex items-center justify-between text-sm font-semibold text-gray-900 py-2"
+    <div className="hidden md:block w-56 shrink-0 pr-6 self-start">
+      <div ref={slotRef}>
+        <nav
+          ref={navRef}
+          className="overflow-y-auto"
+          style={{
+            maxHeight: `calc(100vh - ${NAVBAR_HEIGHT + 32}px)`,
+            ...(stuck || {}),
+          }}
         >
-          Apps
-          <motion.svg
-            className="h-4 w-4 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            animate={{ rotate: appsOpen ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </motion.svg>
-        </button>
-
-        <AnimatePresence initial={false}>
-          {appsOpen && (
-            <motion.ul
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="mt-1 space-y-1 overflow-hidden"
+          <div>
+            <button
+              type="button"
+              onClick={() => setAppsOpen((v) => !v)}
+              className="w-full flex items-center justify-between text-sm font-semibold text-gray-900 py-2"
             >
-              {CATEGORIES.map((cat) => (
-                <li key={cat.id} className="list-none">
+              Apps
+              <motion.svg
+                className="h-4 w-4 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                animate={{ rotate: appsOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </motion.svg>
+            </button>
+
+            <AnimatePresence initial={false}>
+              {appsOpen && (
+                <motion.ul
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="mt-1 space-y-1 overflow-hidden"
+                >
+                  {CATEGORIES.map((cat) => (
+                    <li key={cat.id} className="list-none">
+                      <button
+                        type="button"
+                        onClick={() => onNavigate(cat.id)}
+                        className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
+                          activeId === cat.id
+                            ? "bg-indigo-50 text-indigo-700 font-medium"
+                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="mt-6">
+            <p className="text-sm font-semibold text-gray-900 py-2">Suites</p>
+            <ul className="mt-1 space-y-1">
+              {SUITES.map((suite) => (
+                <li key={suite.id}>
                   <button
                     type="button"
-                    onClick={() => onNavigate(cat.id)}
+                    onClick={() => onNavigate(suite.id)}
                     className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
-                      activeId === cat.id
+                      activeId === suite.id
                         ? "bg-indigo-50 text-indigo-700 font-medium"
                         : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }`}
                   >
-                    {cat.label}
+                    {suite.label}
                   </button>
                 </li>
               ))}
-            </motion.ul>
-          )}
-        </AnimatePresence>
+            </ul>
+          </div>
+        </nav>
       </div>
-
-      <div className="mt-6">
-        <p className="text-sm font-semibold text-gray-900 py-2">Suites</p>
-        <ul className="mt-1 space-y-1">
-          {SUITES.map((suite) => (
-            <li key={suite.id}>
-              <button
-                type="button"
-                onClick={() => onNavigate(suite.id)}
-                className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
-                  activeId === suite.id
-                    ? "bg-indigo-50 text-indigo-700 font-medium"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                {suite.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
+    </div>
   );
 }
 
-// ---- Mobile nav (below md): horizontally scrollable pill tabs -------------
+// ---- Mobile nav (below md): pill tabs that stay pinned while you scroll -----
 
-function MobileNav({ activeId, onNavigate }) {
+function MobileNav({ activeId, onNavigate, boundaryRef }) {
   const items = [...CATEGORIES, ...SUITES];
+  const slotRef = useRef(null);
+  const barRef = useRef(null);
+  const scrollerRef = useRef(null);
+  const buttonRefs = useRef({});
+  const [barHeight, setBarHeight] = useState(MOBILE_NAV_HEIGHT);
+
+  const stuck = useStuck({
+    slotRef,
+    boundaryRef,
+    itemRef: barRef,
+    top: NAVBAR_HEIGHT,
+    fullWidth: true,
+  });
+
+  /* Reserve the bar's exact height so content doesn't jump when it pins */
+  useEffect(() => {
+    const measure = () => {
+      if (barRef.current) setBarHeight(barRef.current.offsetHeight);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  /* Keep the active pill centred in the bar as you scroll or tap */
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    const btn = buttonRefs.current[activeId];
+    if (!scroller || !btn) return;
+    const left = btn.offsetLeft - scroller.clientWidth / 2 + btn.clientWidth / 2;
+    scroller.scrollTo({ left, behavior: "smooth" });
+  }, [activeId]);
 
   return (
-    <div className="md:hidden -mx-4 px-4 mb-6 sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-gray-100">
-      <div className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
-        {items.map((item) => (
-          <motion.button
-            key={item.id}
-            type="button"
-            onClick={() => onNavigate(item.id)}
-            whileTap={{ scale: 0.94 }}
-            className={`shrink-0 whitespace-nowrap text-sm px-3 py-1.5 rounded-full border transition-colors ${
-              activeId === item.id
-                ? "bg-indigo-600 text-white border-indigo-600"
-                : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
-            }`}
-          >
-            {item.label}
-          </motion.button>
-        ))}
+    <div
+      ref={slotRef}
+      className="md:hidden mb-6"
+      style={{ height: barHeight }}
+    >
+      <div
+        ref={barRef}
+        className={`z-30 bg-white/95 backdrop-blur border-b border-gray-100 ${
+          stuck ? "px-4" : "-mx-4 px-4"
+        }`}
+        style={stuck || undefined}
+      >
+        <div
+          ref={scrollerRef}
+          className="relative flex gap-2 overflow-x-auto py-3 no-scrollbar"
+        >
+          {items.map((item) => (
+            <motion.button
+              key={item.id}
+              ref={(el) => (buttonRefs.current[item.id] = el)}
+              type="button"
+              onClick={() => onNavigate(item.id)}
+              whileTap={{ scale: 0.94 }}
+              className={`shrink-0 whitespace-nowrap text-sm px-3 py-1.5 rounded-full border transition-colors ${
+                activeId === item.id
+                  ? "bg-indigo-600 text-white border-indigo-600"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {item.label}
+            </motion.button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -460,17 +651,24 @@ function SuiteSection({ suite }) {
 
 export default function AppsSidebar() {
   const [activeId, setActiveId] = useState(CATEGORIES[0].id);
+  // Timestamp until which scroll-spy is paused (during a click-scroll)
+  const lockRef = useRef(0);
+  // The content column: the sidebar/pill bar pin while it is on screen
+  const contentRef = useRef(null);
 
   const handleNavigate = (id) => {
     setActiveId(id);
+    lockRef.current = Date.now() + 900;
     scrollToSection(id);
   };
 
+  useScrollSpy(ALL_SECTION_IDS, setActiveId, lockRef);
+
   return (
     <Wrapper className="flex flex-col md:flex-row py-6 sm:py-8">
-      <Sidebar activeId={activeId} onNavigate={handleNavigate} />
-      <div className="flex-1 min-w-0">
-        <MobileNav activeId={activeId} onNavigate={handleNavigate} />
+      <Sidebar activeId={activeId} onNavigate={handleNavigate} boundaryRef={contentRef} />
+      <div ref={contentRef} className="flex-1 min-w-0">
+        <MobileNav activeId={activeId} onNavigate={handleNavigate} boundaryRef={contentRef} />
         {CATEGORIES.map((cat) => (
           <CategorySection key={cat.id} category={cat} />
         ))}
