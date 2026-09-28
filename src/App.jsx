@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
@@ -8,11 +8,15 @@ import Footer from "./components/Footer";
 import About from "./pages/About";
 import Product from "./pages/Product";
 import Solution from "./pages/Solution";
+import GetStarted from "./pages/GetStarted";
 
+// Needs to live inside <BrowserRouter> so useLocation works
+const Layout = () => {
+  const { pathname } = useLocation();
+  const hideFooter = pathname === "/get-started";
 
-const App = () => {
   return (
-    <BrowserRouter>
+    <>
       <Navbar />
 
       <Routes>
@@ -21,11 +25,18 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/product" element={<Product />} />
         <Route path="/solution" element={<Solution />} />
-        
+        <Route path="/get-started" element={<GetStarted />} />
       </Routes>
-          <Footer/>
-    </BrowserRouter>
+
+      {!hideFooter && <Footer />}
+    </>
   );
 };
+
+const App = () => (
+  <BrowserRouter>
+    <Layout />
+  </BrowserRouter>
+);
 
 export default App;
