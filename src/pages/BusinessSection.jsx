@@ -26,6 +26,7 @@ const bannerFeatures = [
 const suites = [
   {
     title: "CephasHR",
+    href: "/cephas-hr",
     tags: ["HRMS", "Payroll Management", "Project Management"],
     workflows: [
       "POS sale automatically updates Ledger and reduces stock count in real time",
@@ -44,7 +45,7 @@ const suites = [
   },
 ];
 
-const SuiteCard = ({ title, tags, workflows, index }) => {
+const SuiteCard = ({ title, tags, workflows, index, href }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -83,10 +84,15 @@ const SuiteCard = ({ title, tags, workflows, index }) => {
         </ul>
       </div>
 
-      <button className="mt-7 w-full rounded-xl bg-indigo-500 py-3 text-[14px] font-semibold text-white flex items-center justify-center gap-2 hover:bg-indigo-600 transition-colors">
+      {/* Plain <a> (not React Router <Link>) so the browser does a full page
+          load and Vercel's rewrite can serve the other app */}
+      <a
+        href={href || "#"}
+        className="mt-7 w-full rounded-xl bg-indigo-500 py-3 text-[14px] font-semibold text-white flex items-center justify-center gap-2 hover:bg-indigo-600 transition-colors"
+      >
         Explore
         <ArrowRight className="w-4 h-4" />
-      </button>
+      </a>
     </motion.div>
   );
 };

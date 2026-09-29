@@ -1,3 +1,8 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    { "source": "/cephas-hr/assets/:path*", "destination": "https://cephas-hr-zk88.vercel.app/assets/:path*" },
+    { "source": "/cephas-hr", "destination": "https://cephas-hr-zk88.vercel.app/" },
+    { "source": "/cephas-hr/:path*", "destination": "https://cephas-hr-zk88.vercel.app/" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }

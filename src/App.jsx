@@ -33,6 +33,7 @@ const Layout = () => {
   );
 };
 
+// No basename here: the suite lives at the root of its own domain
 const App = () => (
   <BrowserRouter>
     <Layout />
