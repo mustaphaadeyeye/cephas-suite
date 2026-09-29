@@ -155,7 +155,8 @@ const FeatureCard = ({
   eyebrow,
   eyebrowColor,
   title,
-  description
+  description,
+  index = 0,
 }) => {
   return (
     <motion.div
@@ -176,16 +177,18 @@ const FeatureCard = ({
       className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col gap-4"
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.7 }}
-        whileInView={{ opacity: 1, scale: 1 }}
+        initial={{ scale: 0, rotate: -20 }}
+        whileInView={{ scale: 1, rotate: 0 }}
         viewport={{ once: true }}
         transition={{
           duration: 0.4,
-          ease: "easeOut",
+          delay: (index % 4) * 0.1 + 0.15,
+          type: "spring",
+          stiffness: 200,
         }}
         className={`w-9 h-9 rounded-lg flex items-center justify-center ${iconBg}`}
       >
-        <Icon className={`w-4.5 h-4.5 ${iconColor}`} size={18} />
+        <Icon className={iconColor} size={18} />
       </motion.div>
 
       <div className="flex flex-col gap-2">

@@ -70,7 +70,7 @@ const StepAccount = ({ data, setData, onNext }) => {
     <form onSubmit={submit}>
       <Progress step={1} />
 
-      <h2 className="mt-6 text-xl font-extrabold text-[#111320]">Create your account</h2>
+      <h2 className=" text-xl font-extrabold text-[#111320]">Create your account</h2>
       <p className="mt-1.5 text-xs text-[#6B7194]">
         Set up your Cephas Suite workspace in 3 quick steps.
       </p>
