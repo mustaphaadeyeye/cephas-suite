@@ -134,6 +134,7 @@ const CATEGORIES = [
         tag: "APP",
         suite: "Commerce Suite",
         name: "CEPROAM",
+          href: "/ceproam",
         description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
         features: [
           "Real-time FIFO/LIFO tracking",
@@ -224,7 +225,7 @@ const CATEGORIES = [
 ];
 
 const SUITES = [
-  { id: "cell-hr", label: "Cell-HR" },
+  { id: "ceephas-hr", label: "CephasHR" },
   { id: "cephas-book", label: "Cephas Book" },
 ];
 
@@ -449,20 +450,29 @@ function Sidebar({ activeId, onNavigate, boundaryRef }) {
             <p className="text-sm font-semibold text-gray-900 py-2">Suites</p>
             <ul className="mt-1 space-y-1">
               {SUITES.map((suite) => (
-                <li key={suite.id}>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate(suite.id)}
-                    className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
-                      activeId === suite.id
-                        ? "bg-indigo-50 text-indigo-700 font-medium"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                    }`}
-                  >
-                    {suite.label}
-                  </button>
-                </li>
-              ))}
+  <li key={suite.id}>
+    {suite.id === "ceephas-hr" ? (
+      <a
+        href="/cephas-hr"
+        className="w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors block text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+      >
+        {suite.label}
+      </a>
+    ) : (
+      <button
+        type="button"
+        onClick={() => onNavigate(suite.id)}
+        className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
+          activeId === suite.id
+            ? "bg-indigo-50 text-indigo-700 font-medium"
+            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+        }`}
+      >
+        {suite.label}
+      </button>
+    )}
+  </li>
+))}
             </ul>
           </div>
         </nav>
@@ -594,17 +604,20 @@ function AppCard({ app, index }) {
         ))}
       </ul>
 
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        type="button"
-        className="mt-auto w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 flex items-center justify-center gap-1.5 transition-colors"
-      >
-        Open App
-        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-      </motion.button>
+     <a
+  href={app.href || "#"}
+  className="mt-auto w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 flex items-center justify-center gap-1.5 transition-colors"
+>
+  Open App
+  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M17 8l4 4m0 0l-4 4m4-4H3"
+    />
+  </svg>
+</a>
     </motion.div>
   );
 }
@@ -631,21 +644,21 @@ function CategorySection({ category }) {
   );
 }
 
-function SuiteSection({ suite }) {
-  return (
-    <motion.section
-      id={suite.id}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.4 }}
-      className="scroll-mt-24 mb-10 sm:mb-14"
-    >
-      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{suite.label}</h2>
-      <p className="text-sm text-gray-500">No apps in this suite yet.</p>
-    </motion.section>
-  );
-}
+// function SuiteSection({ suite }) {
+//   return (
+//     <motion.section
+//       id={suite.id}
+//       initial={{ opacity: 0, y: 20 }}
+//       whileInView={{ opacity: 1, y: 0 }}
+//       viewport={{ once: true, amount: 0.1 }}
+//       transition={{ duration: 0.4 }}
+//       className="scroll-mt-24 mb-10 sm:mb-14"
+//     >
+//       <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{suite.label}</h2>
+//       <p className="text-sm text-gray-500">No apps in this suite yet.</p>
+//     </motion.section>
+//   );
+// }
 
 // ---- Root component -----------------------------------------------------
 
@@ -672,9 +685,9 @@ export default function AppsSidebar() {
         {CATEGORIES.map((cat) => (
           <CategorySection key={cat.id} category={cat} />
         ))}
-        {SUITES.map((suite) => (
+        {/* {SUITES.map((suite) => (
           <SuiteSection key={suite.id} suite={suite} />
-        ))}
+        ))} */}
       </div>
     </Wrapper>
   );

@@ -3,6 +3,11 @@
     { "source": "/cephas-hr/assets/:path*", "destination": "https://cephas-hr-zk88.vercel.app/assets/:path*" },
     { "source": "/cephas-hr", "destination": "https://cephas-hr-zk88.vercel.app/" },
     { "source": "/cephas-hr/:path*", "destination": "https://cephas-hr-zk88.vercel.app/" },
+
+    { "source": "/ceproam/assets/:path*", "destination": "https://ceproam-website.vercel.app/assets/:path*" },
+    { "source": "/ceproam", "destination": "https://ceproam-website.vercel.app/" },
+    { "source": "/ceproam/:path*", "destination": "https://ceproam-website.vercel.app/" },
+
     { "source": "/(.*)", "destination": "/" }
   ]
 }

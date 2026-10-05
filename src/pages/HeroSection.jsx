@@ -135,10 +135,10 @@ function HeroLines({ progress }) {
   const cy = hub.top + ICON_HALF;
 
   return (
-    <motion.div
-      style={{ opacity }}
-      className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none hidden lg:block"
-    >
+   <motion.div
+  style={{ opacity }}
+  className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none hidden lg:block"
+>
       <svg
         width="1"
         height="1"
