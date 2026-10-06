@@ -23,9 +23,6 @@ const EASE = [0.22, 1, 0.36, 1];
 
 /* ------------------------------------------------------------------
    Scroll helpers
-   progress = 0 at the top of the page, 1 once the hero has fully
-   scrolled out of view. Both helpers do nothing when the visitor
-   prefers reduced motion.
 ------------------------------------------------------------------- */
 function useParallax(progress, distance) {
   const reduceMotion = useReducedMotion();
@@ -126,7 +123,7 @@ const FAN_ENDS = [-210, -130, -60, 60, 130, 210];
 const FAN_REACH = 1000;
 
 /* ------------------------------------------------------------------
-   Hero connection lines (draw in, then fade gently as you scroll)
+   Hero connection lines (desktop only)
 ------------------------------------------------------------------- */
 function HeroLines({ progress }) {
   const reduceMotion = useReducedMotion();
@@ -135,10 +132,10 @@ function HeroLines({ progress }) {
   const cy = hub.top + ICON_HALF;
 
   return (
-   <motion.div
-  style={{ opacity }}
-  className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none hidden lg:block"
->
+    <motion.div
+      style={{ opacity }}
+      className="absolute left-1/2 top-0 w-0 h-0 pointer-events-none hidden lg:block"
+    >
       <svg
         width="1"
         height="1"
@@ -207,7 +204,7 @@ function HeroLines({ progress }) {
 }
 
 /* ------------------------------------------------------------------
-   Badges marquee (moves horizontally on all screen sizes)
+   Badges marquee
 ------------------------------------------------------------------- */
 const COPIES = 4;
 const SPEED = 40; // pixels per second
@@ -227,7 +224,6 @@ function HeroBadgesMarquee({ heroBadges }) {
     return () => ro.disconnect();
   }, [heroBadges]);
 
-  /* Accessibility: users who prefer reduced motion get a static row */
   if (reduceMotion) {
     return (
       <div className="mt-8 sm:mt-10 flex flex-wrap justify-center gap-x-[28px] gap-y-3 items-center px-4">
@@ -283,14 +279,12 @@ function HeroBadgesMarquee({ heroBadges }) {
 }
 
 /* ------------------------------------------------------------------
-   Headline: words rise in on load, ripple with a gentle wave while
-   idle, then fill with brand blue one by one as you scroll
+   Headline
 ------------------------------------------------------------------- */
 const HEADLINE_CLASS =
   "font-['Bricolage_Grotesque'] font-extrabold leading-[1.1] lg:leading-[78px] text-[#111320] text-[36px] sm:text-[52px] md:text-[64px] lg:text-[80px] text-center tracking-[-1px] lg:tracking-[-2px] max-w-[978px]";
 
 function HeadlineWord({ word, index, progress }) {
-  /* Scroll: drifts up a little, turns brand blue in sequence, then fades */
   const y = useParallax(progress, -(30 + index * 14));
   const color = useTransform(
     progress,
@@ -300,13 +294,11 @@ function HeadlineWord({ word, index, progress }) {
   const opacity = useFade(progress, 0.45 + index * 0.02, 0.75 + index * 0.02);
 
   return (
-    /* Scroll layer sits OUTSIDE the mask so words can travel freely */
     <motion.span
       style={{ y, opacity }}
       aria-hidden="true"
       className="inline-block will-change-transform"
     >
-      {/* Idle wave: a soft bob rolls through the sentence, word by word */}
       <motion.span
         className="inline-block will-change-transform"
         animate={{ y: [0, -5, 0] }}
@@ -318,8 +310,6 @@ function HeadlineWord({ word, index, progress }) {
           repeatDelay: 0.6,
         }}
       >
-        {/* Mask so each word slides up from behind a clean edge on load.
-            Padding/negative margin keep descenders from being clipped. */}
         <span className="inline-block overflow-hidden align-bottom pb-[0.12em] -mb-[0.12em]">
           <motion.span
             className="inline-block will-change-transform"
@@ -373,7 +363,6 @@ function AnimatedHeadline({ text, progress }) {
   );
 }
 
-/* Wrapper that moves and fades a block of content as you scroll */
 function ScrollLayer({ progress, distance, fadeStart, fadeEnd, className, children }) {
   const y = useParallax(progress, distance);
   const opacity = useFade(progress, fadeStart, fadeEnd);
@@ -385,7 +374,6 @@ function ScrollLayer({ progress, distance, fadeStart, fadeEnd, className, childr
   );
 }
 
-/* Wrapper that gives each floating icon its own parallax speed */
 function IconParallax({ progress, distance, children }) {
   const y = useParallax(progress, distance);
   return <motion.div style={{ y }}>{children}</motion.div>;
@@ -403,7 +391,6 @@ export default function Home() {
     offset: ["start start", "end start"],
   });
 
-  /* Smoothed so scroll effects glide instead of jittering */
   const progress = useSpring(scrollYProgress, {
     stiffness: 110,
     damping: 28,
@@ -412,9 +399,12 @@ export default function Home() {
 
   return (
     <div className="bg-[#fafbff] w-full overflow-x-hidden">
+      {/* FIX: min-height now applies only at lg (where the floating icons
+          and lines are visible). Below lg the section shrinks to its
+          content, with bottom padding for breathing room. */}
       <section
         ref={sectionRef}
-        className="relative w-full overflow-hidden min-h-[640px] sm:min-h-[720px] lg:min-h-[879px]"
+        className="relative w-full overflow-hidden pb-12 sm:pb-16 lg:pb-0 lg:min-h-[879px]"
       >
         <HeroLines progress={progress} />
 
@@ -436,7 +426,6 @@ export default function Home() {
 
         {/* Hero content */}
         <div className="max-w-[1280px] mx-auto px-6 sm:px-10 lg:px-20 pt-16 sm:pt-20 lg:pt-[100px] flex flex-col items-center">
-
           <div className="flex flex-col items-center w-full">
             <AnimatedHeadline
               text="Run your entire enterprise on one operational engine."
@@ -454,11 +443,7 @@ export default function Home() {
             <motion.p
               initial={{ opacity: 0, y: 25 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.7,
-                delay: 0.2,
-                ease: EASE,
-              }}
+              transition={{ duration: 0.7, delay: 0.2, ease: EASE }}
               className="mt-4 sm:mt-5 font-['DM_Sans'] font-normal leading-[1.55] lg:leading-[28.05px] text-[#4f5674] text-[15px] sm:text-[16px] lg:text-[17px] text-center max-w-[580px]"
             >
               Deploy precision point apps to resolve immediate bottlenecks, or activate complete multi-department suites under a single login, unified database, and consolidated invoice.
@@ -475,11 +460,7 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.35,
-                ease: EASE,
-              }}
+              transition={{ duration: 0.6, delay: 0.35, ease: EASE }}
               className="mt-7 sm:mt-9 flex flex-col sm:flex-row gap-[12px] items-center w-full sm:w-auto px-4 sm:px-0"
             >
               <motion.button
@@ -522,13 +503,9 @@ export default function Home() {
           </ScrollLayer>
         </div>
 
-        {/* Floating app icons — decorative; hidden below lg since their
-            positions are hand-tuned offsets from a 1280px-wide hero and
-            would overflow or overlap the content on narrower viewports */}
+        {/* Floating app icons: desktop only */}
         <div className="hidden lg:block">
           {floatingIcons.map(({ x, top, bg, kind }, i) => (
-            /* Outer div handles positioning only, so Framer's transforms
-               never clash with the -translate-x-1/2 centering class */
             <div
               key={i}
               className="absolute -translate-x-1/2 pointer-events-none"
@@ -537,26 +514,16 @@ export default function Home() {
                 top,
               }}
             >
-              {/* Each icon drifts up at its own speed while you scroll */}
               <IconParallax progress={progress} distance={-(50 + (i % 4) * 35)}>
                 <motion.div
-                  initial={{
-                    opacity: 0,
-                    scale: 0.5,
-                    y: 20,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                    y: 0,
-                  }}
+                  initial={{ opacity: 0, scale: 0.5, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{
                     duration: 0.7,
                     delay: 0.5 + i * 0.08,
                     ease: EASE,
                   }}
                 >
-                  {/* Gentle idle float, each icon slightly out of sync */}
                   <motion.div
                     animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
                     transition={{

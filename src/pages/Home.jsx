@@ -158,7 +158,7 @@ const Organization = () => {
   };
 
   return (
-    <div className="w-full bg-slate-50 py-16">
+    <div className="w-full bg-slate-50 lg:py-16 py-0 ">
       <Wrapper>
 
         <motion.h1

@@ -10,7 +10,7 @@ export default defineConfig({
         target: 'https://cephas-hr-zk88.vercel.app',
         changeOrigin: true,
         secure: true,
-        rewrite: (path) =>
+        rewrite: (path) =>                                  
           path.startsWith('/cephas-hr/assets') ? path.replace('/cephas-hr', '') : '/',
       },
       '/ceproam': {
