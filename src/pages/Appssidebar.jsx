@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FiClock } from "react-icons/fi";
 import Wrapper from "../components/Wrapper";
+import Comingsoonmodal from "../components/Comingsoonmodal";
 
 const CATEGORIES = [
   {
@@ -11,6 +13,7 @@ const CATEGORIES = [
         tag: "APP",
         suite: "Commerce Suite",
         name: "GEDU Games",
+        href: "https://cedu.cephassuite.com",
         description: "Fun educational games designed for kids of all ages to learn and play.",
         features: [
           "Real-time FIFO/LIFO tracking",
@@ -49,7 +52,20 @@ const CATEGORIES = [
       {
         tag: "APP",
         suite: "Commerce Suite",
+        href: "/cephas-hr",
+        name: "CephasHR",
+        description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
+        features: [
+          "Clock-ins update active project hours and log task durations instantly.",
+          "Task completions update project milestones and calculate output rates instantly.",
+          "End-of-quarter performance review syncs directly to annual merit pay adjustments.",
+        ],
+      },
+      {
+        tag: "APP",
+        suite: "Commerce Suite",
         name: "Work Management",
+        href: "/cephas-hr",
         description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
         features: [
           "Real-time FIFO/LIFO tracking",
@@ -61,6 +77,7 @@ const CATEGORIES = [
         tag: "ANALYTICS",
         suite: "Commerce Suite",
         name: "Time Tracking & PM Overview",
+        href: "/cephas-hr",
         description: "Comprehensive sales insights and customer behavior analysis.",
         features: [
           "Customizable dashboard widgets",
@@ -117,7 +134,7 @@ const CATEGORIES = [
         tag: "APP",
         suite: "Commerce Suite",
         name: "AgroLink",
-         href: "/agrolink",
+        href: "/agrolink",
         description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
         features: [
           "Real-time FIFO/LIFO tracking",
@@ -135,7 +152,7 @@ const CATEGORIES = [
         tag: "APP",
         suite: "Commerce Suite",
         name: "CEPROAM",
-          href: "/ceproam",
+        href: "/ceproam",
         description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
         features: [
           "Real-time FIFO/LIFO tracking",
@@ -160,28 +177,28 @@ const CATEGORIES = [
           "Dynamic low-stock reorder points",
         ],
       },
-      {
-        tag: "ANALYTICS",
-        suite: "Commerce Suite",
-        name: "Lena Morales",
-        description: "Comprehensive sales insights and customer behavior analysis.",
-        features: [
-          "Customizable dashboard widgets",
-          "Predictive sales forecasting",
-          "Multi-channel performance tracking",
-        ],
-      },
-      {
-        tag: "MARKETING",
-        suite: "Commerce Suite",
-        name: "Raj Patel",
-        description: "Targeted campaign management with automated segmentation.",
-        features: [
-          "A/B testing tools",
-          "Email and SMS automation",
-          "Real-time engagement metrics",
-        ],
-      },
+      // {
+      //   tag: "ANALYTICS",
+      //   suite: "Commerce Suite",
+      //   name: "Lena Morales",
+      //   description: "Comprehensive sales insights and customer behavior analysis.",
+      //   features: [
+      //     "Customizable dashboard widgets",
+      //     "Predictive sales forecasting",
+      //     "Multi-channel performance tracking",
+      //   ],
+      // },
+      // {
+      //   tag: "MARKETING",
+      //   suite: "Commerce Suite",
+      //   name: "Raj Patel",
+      //   description: "Targeted campaign management with automated segmentation.",
+      //   features: [
+      //     "A/B testing tools",
+      //     "Email and SMS automation",
+      //     "Real-time engagement metrics",
+      //   ],
+      // },
     ],
   },
   {
@@ -199,38 +216,40 @@ const CATEGORIES = [
           "Dynamic low-stock reorder points",
         ],
       },
-      {
-        tag: "ANALYTICS",
-        suite: "Commerce Suite",
-        name: "Lena Morales",
-        description: "Comprehensive sales insights and customer behavior analysis.",
-        features: [
-          "Customizable dashboard widgets",
-          "Predictive sales forecasting",
-          "Multi-channel performance tracking",
-        ],
-      },
-      {
-        tag: "MARKETING",
-        suite: "Commerce Suite",
-        name: "Raj Patel",
-        description: "Targeted campaign management with automated segmentation.",
-        features: [
-          "A/B testing tools",
-          "Email and SMS automation",
-          "Real-time engagement metrics",
-        ],
-      },
+      // {
+      //   tag: "ANALYTICS",
+      //   suite: "Commerce Suite",
+      //   name: "Lena Morales",
+      //   description: "Comprehensive sales insights and customer behavior analysis.",
+      //   features: [
+      //     "Customizable dashboard widgets",
+      //     "Predictive sales forecasting",
+      //     "Multi-channel performance tracking",
+      //   ],
+      // },
+      // {
+      //   tag: "MARKETING",
+      //   suite: "Commerce Suite",
+      //   name: "Raj Patel",
+      //   description: "Targeted campaign management with automated segmentation.",
+      //   features: [
+      //     "A/B testing tools",
+      //     "Email and SMS automation",
+      //     "Real-time engagement metrics",
+      //   ],
+      // },
     ],
   },
 ];
 
+// Suites with an href are direct links (they have no section on this page)
 const SUITES = [
-  { id: "ceephas-hr", label: "CephasHR" },
-  { id: "cephas-book", label: "Cephas Book" },
+  // { id: "ceephas-hr", label: "CephasHR", href: "/cephas-hr" },
+  { id: "cephas-book", label: "Cephas Book", href: "https://cephas-books.onrender.com" },
 ];
 
-const ALL_SECTION_IDS = [...CATEGORIES, ...SUITES].map((s) => s.id);
+// Scroll-spy only tracks the category sections that exist on the page
+const ALL_SECTION_IDS = CATEGORIES.map((s) => s.id);
 
 // ---- Layout constants (adjust to match your real layout) -------------------
 
@@ -451,29 +470,15 @@ function Sidebar({ activeId, onNavigate, boundaryRef }) {
             <p className="text-sm font-semibold text-gray-900 py-2">Suites</p>
             <ul className="mt-1 space-y-1">
               {SUITES.map((suite) => (
-  <li key={suite.id}>
-    {suite.id === "ceephas-hr" ? (
-      <a
-        href="/cephas-hr"
-        className="w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors block text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-      >
-        {suite.label}
-      </a>
-    ) : (
-      <button
-        type="button"
-        onClick={() => onNavigate(suite.id)}
-        className={`w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors ${
-          activeId === suite.id
-            ? "bg-indigo-50 text-indigo-700 font-medium"
-            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-        }`}
-      >
-        {suite.label}
-      </button>
-    )}
-  </li>
-))}
+                <li key={suite.id} className="list-none">
+                  <a
+                    href={suite.href}
+                    className="block w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    {suite.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </nav>
@@ -485,7 +490,6 @@ function Sidebar({ activeId, onNavigate, boundaryRef }) {
 // ---- Mobile nav (below md): pill tabs that stay pinned while you scroll -----
 
 function MobileNav({ activeId, onNavigate, boundaryRef }) {
-  const items = [...CATEGORIES, ...SUITES];
   const slotRef = useRef(null);
   const barRef = useRef(null);
   const scrollerRef = useRef(null);
@@ -536,7 +540,7 @@ function MobileNav({ activeId, onNavigate, boundaryRef }) {
           ref={scrollerRef}
           className="relative flex gap-2 overflow-x-auto py-3 no-scrollbar"
         >
-          {items.map((item) => (
+          {CATEGORIES.map((item) => (
             <motion.button
               key={item.id}
               ref={(el) => (buttonRefs.current[item.id] = el)}
@@ -551,6 +555,17 @@ function MobileNav({ activeId, onNavigate, boundaryRef }) {
             >
               {item.label}
             </motion.button>
+          ))}
+
+          {/* Suites link straight out, so they are plain links, not tabs */}
+          {SUITES.map((suite) => (
+            <a
+              key={suite.id}
+              href={suite.href}
+              className="shrink-0 whitespace-nowrap text-sm px-3 py-1.5 rounded-full border bg-white text-gray-600 border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              {suite.label}
+            </a>
           ))}
         </div>
       </div>
@@ -569,7 +584,10 @@ const cardVariants = {
   }),
 };
 
-function AppCard({ app, index }) {
+const BUTTON_BASE =
+  "mt-auto w-full rounded-lg text-sm font-medium py-2.5 flex items-center justify-center gap-1.5 transition-colors";
+
+function AppCard({ app, index, onComingSoon }) {
   return (
     <motion.div
       custom={index}
@@ -605,27 +623,41 @@ function AppCard({ app, index }) {
         ))}
       </ul>
 
-     <a
-  href={app.href || "#"}
-  className="mt-auto w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 flex items-center justify-center gap-1.5 transition-colors"
->
-  Open App
-  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M17 8l4 4m0 0l-4 4m4-4H3"
-    />
-  </svg>
-</a>
+      {app.href ? (
+        // Has a link: plain <a> (full page load, so Vercel rewrites and
+        // external sites both work)
+        <a
+          href={app.href}
+          className={`${BUTTON_BASE} bg-indigo-600 hover:bg-indigo-700 text-white`}
+        >
+          Open App
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
+          </svg>
+        </a>
+      ) : (
+        // No link yet: opens the Coming Soon modal
+        <button
+          type="button"
+          onClick={() => onComingSoon(app.name)}
+          className={`${BUTTON_BASE} bg-indigo-50 hover:bg-indigo-100 text-indigo-700`}
+        >
+          <FiClock className="h-4 w-4" />
+          Coming Soon
+        </button>
+      )}
     </motion.div>
   );
 }
 
 // ---- Content sections -------------------------------------------------
 
-function CategorySection({ category }) {
+function CategorySection({ category, onComingSoon }) {
   return (
     <motion.section
       id={category.id}
@@ -638,33 +670,24 @@ function CategorySection({ category }) {
       <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{category.label}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
         {category.apps.map((app, i) => (
-          <AppCard key={app.name + category.id} app={app} index={i} />
+          <AppCard
+            key={app.name + category.id}
+            app={app}
+            index={i}
+            onComingSoon={onComingSoon}
+          />
         ))}
       </div>
     </motion.section>
   );
 }
 
-// function SuiteSection({ suite }) {
-//   return (
-//     <motion.section
-//       id={suite.id}
-//       initial={{ opacity: 0, y: 20 }}
-//       whileInView={{ opacity: 1, y: 0 }}
-//       viewport={{ once: true, amount: 0.1 }}
-//       transition={{ duration: 0.4 }}
-//       className="scroll-mt-24 mb-10 sm:mb-14"
-//     >
-//       <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{suite.label}</h2>
-//       <p className="text-sm text-gray-500">No apps in this suite yet.</p>
-//     </motion.section>
-//   );
-// }
-
 // ---- Root component -----------------------------------------------------
 
 export default function AppsSidebar() {
   const [activeId, setActiveId] = useState(CATEGORIES[0].id);
+  // null = modal closed, otherwise the name of the app that was clicked
+  const [comingSoon, setComingSoon] = useState(null);
   // Timestamp until which scroll-spy is paused (during a click-scroll)
   const lockRef = useRef(0);
   // The content column: the sidebar/pill bar pin while it is on screen
@@ -684,12 +707,15 @@ export default function AppsSidebar() {
       <div ref={contentRef} className="flex-1 min-w-0">
         <MobileNav activeId={activeId} onNavigate={handleNavigate} boundaryRef={contentRef} />
         {CATEGORIES.map((cat) => (
-          <CategorySection key={cat.id} category={cat} />
+          <CategorySection key={cat.id} category={cat} onComingSoon={setComingSoon} />
         ))}
-        {/* {SUITES.map((suite) => (
-          <SuiteSection key={suite.id} suite={suite} />
-        ))} */}
       </div>
+
+      <Comingsoonmodal
+        open={comingSoon !== null}
+        onClose={() => setComingSoon(null)}
+        name={comingSoon}
+      />
     </Wrapper>
   );
 }

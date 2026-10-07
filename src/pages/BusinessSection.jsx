@@ -29,18 +29,18 @@ const suites = [
     href: "/cephas-hr",
     tags: ["HRMS", "Payroll Management", "Project Management"],
     workflows: [
-      "POS sale automatically updates Ledger and reduces stock count in real time",
-      "Low-stock trigger fires a purchase order via Invoicing with approval workflow",
-      "End-of-day POS reconciliation syncs directly to monthly financial close",
+      "Clock-ins update active project hours and log task durations instantly.",
+      "Task completions update project milestones and calculate output rates instantly.",
+      "End-of-quarter performance review syncs directly to annual merit pay adjustments.",
     ],
   },
   {
     title: "Cephas Books",
     tags: ["Sales", "Purchases", "Expenses", "Budgeting"],
     workflows: [
-      "POS sale automatically updates Ledger and reduces stock count in real time",
-      "Low-stock trigger fires a purchase order via Invoicing with approval workflow",
-      "End-of-day POS reconciliation syncs directly to monthly financial close",
+      "Field attendance logs feed directly into payroll for automated calculations",
+      "Onboarding creates SSO credentials, assigns roles, and triggers training flow",
+      "Expense submissions auto-route for manager approval and hit payroll on cycle",
     ],
   },
 ];

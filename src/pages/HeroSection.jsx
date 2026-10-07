@@ -7,10 +7,9 @@ import {
   useTransform,
 } from "framer-motion";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-/* ------------------------------------------------------------------
-   IMAGES
-------------------------------------------------------------------- */
+//  IMAGES
 const assetPathPrefix = "/assets";
 const imgCephasAgroLink1Jpg1 = `${assetPathPrefix}/18fea.png`;
 const imgCephasHrBrandmarkJpg1 = `${assetPathPrefix}/fd7e3.png`;
@@ -386,6 +385,13 @@ export default function Home() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef(null);
 
+  // FIX: hooks must be called INSIDE the component, not at module level.
+  const navigate = useNavigate();
+
+  const handleExploreClick = () => {
+    navigate("/product");
+  };
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -399,9 +405,8 @@ export default function Home() {
 
   return (
     <div className="bg-[#fafbff] w-full overflow-x-hidden">
-      {/* FIX: min-height now applies only at lg (where the floating icons
-          and lines are visible). Below lg the section shrinks to its
-          content, with bottom padding for breathing room. */}
+      {/* min-height applies only at lg (where the floating icons and lines
+          are visible). Below lg the section shrinks to its content. */}
       <section
         ref={sectionRef}
         className="relative w-full overflow-hidden pb-12 sm:pb-16 lg:pb-0 lg:min-h-[879px]"
@@ -467,6 +472,7 @@ export default function Home() {
                 whileHover={reduceMotion ? undefined : { y: -2 }}
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={{ duration: 0.2, ease: EASE }}
+                onClick={handleExploreClick}
                 className="group bg-[#4c5de8] flex gap-[7px] items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[#3d4ed9] transition-colors w-full sm:w-auto"
               >
                 <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[14px] text-center text-white tracking-[-0.14px] whitespace-nowrap">
@@ -483,6 +489,7 @@ export default function Home() {
                 whileHover={reduceMotion ? undefined : { y: -2 }}
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={{ duration: 0.2, ease: EASE }}
+                onClick={handleExploreClick}
                 className="border border-[#4f5674] flex items-center justify-center px-[22px] py-[11px] rounded-[8px] hover:bg-[rgba(79,86,116,0.05)] transition-colors w-full sm:w-auto"
               >
                 <span className="font-['DM_Sans'] font-semibold leading-[21px] text-[#4f5674] text-[14px] text-center tracking-[-0.14px] whitespace-nowrap">

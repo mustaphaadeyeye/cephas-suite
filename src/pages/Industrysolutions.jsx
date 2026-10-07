@@ -1,4 +1,6 @@
+import { useState } from "react";
 import Wrapper from "../components/Wrapper";
+import Comingsoonmodal from "../components/Comingsoonmodal";
 import CeduImg from "../assets/cedugames.png"
 import EduImg from "../assets/edugames.png"
 import ChrImg from "../assets/chr.png"
@@ -40,6 +42,7 @@ const solutions = [
   {
     theme: "emerald",
     title: "Peoples(HR)",
+    href: "/cephas-hr",
     description:
       "Explore workforce management tools like ATS, performance appraisals, and self-service portals.",
   },
@@ -58,12 +61,14 @@ const solutions = [
   {
     theme: "violet",
     title: "Real Estate",
+    href: "/ceproam",
     description:
       "Explore property tech like MLS hubs, virtual tours, and lease management.",
   },
   {
     theme: "emerald",
     title: "Agriculture",
+    href: "/agrolink",
     description:
       "Explore smart farming tools like satellite crop monitoring, precision irrigation, and livestock tracking.",
   },
@@ -151,11 +156,11 @@ const TAB_WIDTH_PCT = 45;
 const TAB_HEIGHT = 28; 
 const RADIUS = 14; 
 
-const SolutionCard = ({ theme, title, description }) => {
+const SolutionCard = ({ theme, title, description, href, onComingSoon }) => {
   const colors = colorThemes[theme];
 
-  return (
-    <div className="bg-slate-100/70 rounded-2xl p-3">
+  const cardBody = (
+    <>
       <CardIllustration bg={colors.illustrationBg} accent={colors.accent} title={title} />
 
       <div className="relative" style={{ marginTop: TAB_HEIGHT + 6 }}>
@@ -181,18 +186,39 @@ const SolutionCard = ({ theme, title, description }) => {
           }}
         />
 
-       
         <div className={`relative rounded-2xl ${colors.cardBg} p-4`}>
           <h3 className={`text-[15px] font-semibold text-black`}>{title}</h3>
           <div className="h-px bg-black/10 my-2.5" />
           <p className={`text-[13px] leading-relaxed text-black`}>{description}</p>
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  const cardClass =
+    "block w-full text-left bg-slate-100/70 rounded-2xl p-3 cursor-pointer transition-transform duration-200 hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500";
+
+  // Has a link: plain <a> (full page load, so the Vercel rewrite is used)
+  if (href) {
+    return (
+      <a href={href} className={cardClass}>
+        {cardBody}
+      </a>
+    );
+  }
+
+  // No link yet: open the Coming Soon modal
+  return (
+    <button type="button" onClick={() => onComingSoon(title)} className={cardClass}>
+      {cardBody}
+    </button>
   );
 };
 
 const IndustrySolutions = () => {
+  // null = closed, otherwise the title of the solution that was clicked
+  const [comingSoon, setComingSoon] = useState(null);
+
   return (
     <div className="w-full bg-slate-50 px-6 py-10 sm:px-10 lg:px-16">
       <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
@@ -206,9 +232,19 @@ const IndustrySolutions = () => {
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {solutions.map((solution, index) => (
-          <SolutionCard key={`${solution.title}-${index}`} {...solution} />
+          <SolutionCard
+            key={`${solution.title}-${index}`}
+            {...solution}
+            onComingSoon={setComingSoon}
+          />
         ))}
       </div>
+
+      <Comingsoonmodal
+        open={comingSoon !== null}
+        onClose={() => setComingSoon(null)}
+        name={comingSoon}
+      />
     </div>
   );
 };
