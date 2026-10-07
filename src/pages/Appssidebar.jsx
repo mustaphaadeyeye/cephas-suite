@@ -105,7 +105,20 @@ const CATEGORIES = [
       {
         tag: "APP",
         suite: "Commerce Suite",
+        name: "Cephas Books",
+         href: "https://cephas-books.onrender.com",
+        description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
+        features: [
+          "Field attendance logs feed directly into payroll for automated calculations",
+          "Onboarding creates SSO credentials, assigns roles, and triggers training flow",
+          "Expense submissions auto-route for manager approval and hit payroll on cycle",
+        ],
+      },
+      {
+        tag: "APP",
+        suite: "Commerce Suite",
         name: "Inventory Management",
+         href: "https://cephas-books.onrender.com",
         description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
         features: [
           "Real-time FIFO/LIFO tracking",
@@ -243,10 +256,10 @@ const CATEGORIES = [
 ];
 
 // Suites with an href are direct links (they have no section on this page)
-const SUITES = [
-  // { id: "ceephas-hr", label: "CephasHR", href: "/cephas-hr" },
-  { id: "cephas-book", label: "Cephas Book", href: "https://cephas-books.onrender.com" },
-];
+// const SUITES = [
+//  { id: "ceephas-hr", label: "CephasHR", href: "/cephas-hr" },
+//   { id: "cephas-book", label: "Cephas Book", href: "https://cephas-books.onrender.com" },
+// ];
 
 // Scroll-spy only tracks the category sections that exist on the page
 const ALL_SECTION_IDS = CATEGORIES.map((s) => s.id);
@@ -466,7 +479,7 @@ function Sidebar({ activeId, onNavigate, boundaryRef }) {
             </AnimatePresence>
           </div>
 
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <p className="text-sm font-semibold text-gray-900 py-2">Suites</p>
             <ul className="mt-1 space-y-1">
               {SUITES.map((suite) => (
@@ -480,7 +493,7 @@ function Sidebar({ activeId, onNavigate, boundaryRef }) {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
         </nav>
       </div>
     </div>
@@ -558,7 +571,7 @@ function MobileNav({ activeId, onNavigate, boundaryRef }) {
           ))}
 
           {/* Suites link straight out, so they are plain links, not tabs */}
-          {SUITES.map((suite) => (
+          {/* {SUITES.map((suite) => (
             <a
               key={suite.id}
               href={suite.href}
@@ -566,7 +579,7 @@ function MobileNav({ activeId, onNavigate, boundaryRef }) {
             >
               {suite.label}
             </a>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>

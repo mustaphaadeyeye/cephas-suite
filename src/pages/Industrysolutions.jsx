@@ -49,6 +49,7 @@ const solutions = [
   {
     theme: "violet",
     title: "Finance",
+     href: "https://cephas-books.onrender.com",
     description:
       "Explore financial platforms such as accounting systems, trading tools, and fraud detection.",
   },
