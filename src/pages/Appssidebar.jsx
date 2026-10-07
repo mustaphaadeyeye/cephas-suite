@@ -117,6 +117,7 @@ const CATEGORIES = [
         tag: "APP",
         suite: "Commerce Suite",
         name: "AgroLink",
+         href: "/agrolink",
         description: "Multi-warehouse inventory valuation, batch tracking, and low-stock telemetry.",
         features: [
           "Real-time FIFO/LIFO tracking",

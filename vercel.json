@@ -8,6 +8,10 @@
     { "source": "/ceproam", "destination": "https://ceproam-website.vercel.app/" },
     { "source": "/ceproam/:path*", "destination": "https://ceproam-website.vercel.app/" },
 
+    { "source": "/agrolink/assets/:path*", "destination": "https://agrolink-phi-seven.vercel.app/assets/:path*" },
+    { "source": "/agrolink", "destination": "https://agrolink-phi-seven.vercel.app/index.html" },
+    { "source": "/agrolink/:path*", "destination": "https://agrolink-phi-seven.vercel.app/index.html" },
+
     { "source": "/(.*)", "destination": "/" }
   ]
 }
