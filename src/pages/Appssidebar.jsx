@@ -12,7 +12,7 @@ const CATEGORIES = [
       {
         tag: "APP",
         suite: "Commerce Suite",
-        name: "GEDU Games",
+        name: "CEDU Games",
         href: "https://cedu.cephassuite.com",
         description: "Fun educational games designed for kids of all ages to learn and play.",
         features: [

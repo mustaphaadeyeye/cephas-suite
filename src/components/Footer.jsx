@@ -1,42 +1,93 @@
-
 import { useState } from "react";
 import { Zap } from "lucide-react";
 import Wrapper from "../components/Wrapper";
+// import Comingsoonmodal from "../components/Comingsoonmodal";
+
 import Logo from "../assets/LogoMark.svg";
+import Comingsoonmodal from "./Comingsoonmodal";
+
 
 const FOOTER_LINKS = [
   {
     heading: "Standalone Apps",
-    links: ["CEDU Games", "Cephas AgroLink", "CEPROAM"],
+    links: [
+      { label: "CEDU Games", href: "https://cedu.cephassuite.com" },
+      { label: "Cephas AgroLink", href: "/agrolink" },
+      { label: "CEPROAM", href: "/ceproam" },
+    ],
   },
   {
     heading: "Integrated Suites",
-    links: ["CEHR", "CEPHAS Books"],
+    links: [
+      { label: "CEHR", href: "/cephas-hr" },
+      { label: "CEPHAS Books", href: "https://cephas-books.onrender.com" },
+    ],
   },
   {
     heading: "Solutions",
-    links: ["Education", "Manufacturing", "Organisation"],
+    links: [
+      { label: "Education" },
+      { label: "Manufacturing" },
+      { label: "Organisation" },
+    ],
   },
   {
     heading: "Platform",
-    links: ["Cephas SSO", "Developer APIs", "App Directory"],
+    links: [
+      { label: "Cephas SSO" },
+      { label: "Developer APIs" },
+      { label: "App Directory" },
+    ],
   },
   {
     heading: "Company",
-    links: ["About Cephas", "Cephas Hub", "Contact Sales"],
+    links: [
+      { label: "About Cephas" },
+      { label: "Cephas Hub" },
+      { label: "Contact Sales" },
+    ],
   },
 ];
 
 const LEGAL_LINKS = [
-  "Privacy Policy",
-  "Terms of Service",
-  "Data Protection (NDPR/GDPR)",
-  "Security Standards",
+  { label: "Privacy Policy" },
+  { label: "Terms of Service" },
+  { label: "Data Protection (NDPR/GDPR)" },
+  { label: "Security Standards" },
 ];
+
+// Renders a real link when href exists, otherwise a Coming Soon trigger
+const FooterLink = ({ link, className, onComingSoon }) => {
+  const isExternal = link.href?.startsWith("http");
+
+  if (link.href) {
+    return (
+      <a
+        href={link.href}
+        className={className}
+        {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      >
+        {link.label}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => onComingSoon(link.label)}
+      className={`${className} text-left`}
+    >
+      {link.label}
+    </button>
+  );
+};
 
 const Footer = () => {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  // null = modal closed, otherwise the name of the clicked item
+  const [comingSoon, setComingSoon] = useState(null);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -136,13 +187,12 @@ const Footer = () => {
 
               <ul className="mt-4 space-y-3">
                 {col.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
+                  <li key={link.label}>
+                    <FooterLink
+                      link={link}
+                      onComingSoon={setComingSoon}
                       className="font-Dm text-sm text-[#4F5674] hover:text-[#4C5DE8] transition-colors"
-                    >
-                      {link}
-                    </a>
+                    />
                   </li>
                 ))}
               </ul>
@@ -158,21 +208,25 @@ const Footer = () => {
 
           <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2">
             {LEGAL_LINKS.map((link) => (
-              <li key={link}>
-                <a
-                  href="#"
+              <li key={link.label}>
+                <FooterLink
+                  link={link}
+                  onComingSoon={setComingSoon}
                   className="font-Dm text-xs text-[#9AA0BC] hover:text-[#4C5DE8] transition-colors whitespace-nowrap"
-                >
-                  {link}
-                </a>
+                />
               </li>
             ))}
           </ul>
         </div>
       </Wrapper>
+
+      <Comingsoonmodal
+        open={comingSoon !== null}
+        onClose={() => setComingSoon(null)}
+        name={comingSoon}
+      />
     </footer>
   );
 };
 
 export default Footer;
-
