@@ -41,7 +41,7 @@ const solutions = [
   },
   {
     theme: "emerald",
-    title: "Peoples(HR)",
+    title: "People(HR)",
     href: "/cephas-hr",
     description:
       "Explore workforce management tools like ATS, performance appraisals, and self-service portals.",

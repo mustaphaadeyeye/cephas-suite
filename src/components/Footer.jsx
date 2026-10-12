@@ -50,10 +50,10 @@ const FOOTER_LINKS = [
 ];
 
 const LEGAL_LINKS = [
-  { label: "Privacy Policy" },
-  { label: "Terms of Service" },
-  { label: "Data Protection (NDPR/GDPR)" },
-  { label: "Security Standards" },
+  { label: "Privacy Policy", href: "#" },
+  { label: "Terms of Service", href: "#" },
+  { label: "Data Protection (NDPR/GDPR)", href: "#" },
+  { label: "Security Standards", href: "#" },
 ];
 
 // Renders a real link when href exists, otherwise a Coming Soon trigger
@@ -206,17 +206,18 @@ const Footer = () => {
             © 2026 Cephas Suite Technologies Inc. All rights reserved.
           </p>
 
-          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-            {LEGAL_LINKS.map((link) => (
-              <li key={link.label}>
-                <FooterLink
-                  link={link}
-                  onComingSoon={setComingSoon}
-                  className="font-Dm text-xs text-[#9AA0BC] hover:text-[#4C5DE8] transition-colors whitespace-nowrap"
-                />
-              </li>
-            ))}
-          </ul>
+       <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+  {LEGAL_LINKS.map((link) => (
+    <li key={link.label}>
+      <a
+        href={link.href}
+        className="font-Dm text-xs text-[#9AA0BC] hover:text-[#4C5DE8] transition-colors whitespace-nowrap"
+      >
+        {link.label}
+      </a>
+    </li>
+  ))}
+</ul>
         </div>
       </Wrapper>
 

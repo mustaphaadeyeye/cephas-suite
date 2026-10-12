@@ -1,11 +1,21 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Wrapper from "../components/Wrapper";
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 
 const ModernizeSection = () => {
   const [showCallModal, setShowCallModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const handleCallSubmit = (e) => {
+    e.preventDefault();
+
+    // To capture the form data (e.g. to send to your backend), use:
+    // const data = Object.fromEntries(new FormData(e.target));
+
+    setShowCallModal(false);
+    setShowSuccessModal(true);
+  };
 
   return (
     <div className="">
@@ -104,13 +114,7 @@ const ModernizeSection = () => {
             </div>
 
             {/* Form */}
-            <form
-              className="mt-6 space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setShowCallModal(false);
-              }}
-            >
+            <form className="mt-6 space-y-4" onSubmit={handleCallSubmit}>
               {/* Full Name */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-slate-700">
@@ -209,9 +213,56 @@ const ModernizeSection = () => {
           </motion.div>
         </div>
       )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4 py-6"
+          onClick={() => setShowSuccessModal(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-sm rounded-2xl bg-white p-6 sm:p-8 shadow-2xl text-center"
+          >
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 }}
+              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100"
+            >
+              <Check className="h-8 w-8 text-emerald-600" />
+            </motion.div>
+
+            <h2 className="mt-5 text-2xl font-bold text-slate-900">
+              Call Request Received
+            </h2>
+
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">
+              Thank you! Our team has received your request and will get in
+              touch with you shortly to confirm your call.
+            </p>
+
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="mt-6 w-full rounded-xl bg-indigo-500 py-3 text-sm font-semibold text-white hover:bg-indigo-600 transition-colors"
+            >
+              Done
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default ModernizeSection;
-
