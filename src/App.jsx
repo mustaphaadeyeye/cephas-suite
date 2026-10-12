@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Product from "./pages/Product";
 import Solution from "./pages/Solution";
 import GetStarted from "./pages/GetStarted";
+import ScrollToTop from "./components/ScrollToTop";
 
 // Needs to live inside <BrowserRouter> so useLocation works
 const Layout = () => {
@@ -36,6 +37,7 @@ const Layout = () => {
 // No basename here: the suite lives at the root of its own domain
 const App = () => (
   <BrowserRouter>
+  <ScrollToTop />
     <Layout />
   </BrowserRouter>
 );
