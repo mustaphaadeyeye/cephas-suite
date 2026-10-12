@@ -8,14 +8,14 @@ import {
 } from "framer-motion";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import LogoSuite from "../assets/logosuite.png";
+import AgroImg from "../assets/agrolink.png";
+import CeduImg from "../assets/cedulogo.png";
+import HrImg from "../assets/hrlogo.png";
 
 //  IMAGES
 const assetPathPrefix = "/assets";
-const imgCephasAgroLink1Jpg1 = `${assetPathPrefix}/18fea.png`;
-const imgCephasHrBrandmarkJpg1 = `${assetPathPrefix}/fd7e3.png`;
-const imgGeminiGenerated = `${assetPathPrefix}/9135b.png`;
 const imgVector23 = `${assetPathPrefix}/8b68e.svg`;
-const imgLogoMark1 = `${assetPathPrefix}/0c974.svg`;
 
 /* Shared easing for a smooth, professional feel */
 const EASE = [0.22, 1, 0.36, 1];
@@ -36,46 +36,19 @@ function useFade(progress, start, end) {
 /* ------------------------------------------------------------------
    Small reusable pieces
 ------------------------------------------------------------------- */
+const ICON_IMAGES = {
+  suite: LogoSuite,
+  agro: AgroImg,
+  cedu: CeduImg,
+  hr: HrImg,
+};
+
 function AppIconContent({ kind }) {
-  if (kind === "agro") {
-    return (
-      <div className="absolute inset-0 overflow-hidden rounded-sm">
-        <img
-          alt=""
-          className="absolute h-[235.11%] left-[-21.6%] max-w-none top-[-68.44%] w-[316.29%]"
-          src={imgCephasAgroLink1Jpg1}
-        />
-      </div>
-    );
-  }
-
-  if (kind === "hr") {
-    return (
-      <div className="absolute inset-0 overflow-hidden rounded-sm">
-        <img
-          alt=""
-          className="absolute h-[256.36%] left-[-66.09%] max-w-none top-[-74.55%] w-[242.06%]"
-          src={imgCephasHrBrandmarkJpg1}
-        />
-      </div>
-    );
-  }
-
-  if (kind === "gemini") {
-    return (
-      <img
-        alt=""
-        className="absolute inset-0 max-w-none object-cover size-full"
-        src={imgGeminiGenerated}
-      />
-    );
-  }
-
   return (
     <img
       alt=""
-      className="absolute block inset-0 max-w-none size-full"
-      src={imgLogoMark1}
+      className="absolute inset-0 size-full max-w-none object-contain"
+      src={ICON_IMAGES[kind]}
     />
   );
 }
@@ -99,18 +72,18 @@ function AppIcon({ bg, kind }) {
 ------------------------------------------------------------------- */
 const floatingIcons = [
   { x: -625, top: 453, bg: "bg-[#f4f5fb]", kind: "agro" },
-  { x: -3, top: 605, bg: "bg-[#4c5de8]", kind: "logo" },
-  { x: 209, top: 598, bg: "bg-[#f4f5fb]", kind: "agro" },
+  { x: 0, top: 605, bg: "bg-[#4c5de8]", kind: "suite" }, // center hub
+  { x: 209, top: 598, bg: "bg-[#f4f5fb]", kind: "cedu" },
   { x: -203, top: 622, bg: "bg-[#f4f5fb]", kind: "hr" },
-  { x: -405, top: 590, bg: "bg-[#f4f5fb]", kind: "gemini" },
-  { x: -504, top: 735, bg: "bg-[#f4f5fb]", kind: "logo" },
-  { x: 544, top: 715, bg: "bg-[#f4f5fb]", kind: "logo" },
+  { x: -405, top: 590, bg: "bg-[#f4f5fb]", kind: "cedu" },
+  { x: -504, top: 735, bg: "bg-[#f4f5fb]", kind: "hr" },
+  { x: 544, top: 715, bg: "bg-[#f4f5fb]", kind: "agro" },
   { x: 416, top: 598, bg: "bg-[#f4f5fb]", kind: "hr" },
-  { x: 515, top: 461, bg: "bg-[#f4f5fb]", kind: "gemini" },
+  { x: 515, top: 461, bg: "bg-[#f4f5fb]", kind: "cedu" },
 ];
 
 const ICON_HALF = 31;
-const hub = floatingIcons[1];
+const hub = floatingIcons.find((icon) => icon.kind === "suite");
 
 const heroBadges = [
   { Icon: FiZap, label: "Zero integration maintenance" },
@@ -385,7 +358,7 @@ export default function Home() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef(null);
 
-  // FIX: hooks must be called INSIDE the component, not at module level.
+  // Hooks must be called INSIDE the component, not at module level.
   const navigate = useNavigate();
 
   const handleExploreClick = () => {
