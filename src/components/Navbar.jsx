@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { ChevronDown, ChevronLeft, Menu, X } from "lucide-react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import Logo from "../assets/LogoMark.svg";
@@ -16,6 +17,11 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { pathname } = useLocation();
 
+  // Close the mobile menu when navigating to another page.
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   const navLinkClass = ({ isActive }) =>
     `flex items-center gap-1 text-sm font-medium ${
       isActive ? "text-[#173FD7]" : "text-[#111111]"
@@ -24,7 +30,7 @@ const Navbar = () => {
   const mobileNavLinkClass = ({ isActive }) =>
     `flex items-center justify-between text-sm font-medium ${
       isActive ? "text-[#173FD7]" : "text-[#111111]"
-    }`;
+    } hover:text-[#173FD7]`;
 
   /* ---------- Simplified navbar for the Get Started flow ---------- */
   if (pathname === "/get-started") {
@@ -33,8 +39,14 @@ const Navbar = () => {
         <Wrapper>
           <div className="flex h-[78px] items-center justify-between">
             <NavLink to="/" className="flex items-center">
-              <img src={Logo} alt="Cephas Suite" className="h-10 w-auto object-contain" />
-              <h1 className="text-[#111320] font-black text-[16px]">Cephas Suite</h1>
+              <img
+                src={Logo}
+                alt="Cephas Suite"
+                className="h-10 w-auto object-contain"
+              />
+              <h1 className="text-[16px] font-black text-[#111320]">
+                Cephas Suite
+              </h1>
             </NavLink>
 
             <Link
@@ -57,26 +69,44 @@ const Navbar = () => {
         <div className="flex h-[78px] items-center justify-between">
           <div className="flex items-center gap-4">
             <NavLink to="/" className="flex items-center">
-              <img src={Logo} alt="Cephas Suite" className="h-10 w-auto object-contain" />
-              <h1 className="text-[#111320] font-black text-[16px]">Cephas Suite</h1>
+              <img
+                src={Logo}
+                alt="Cephas Suite"
+                className="h-10 w-auto object-contain"
+              />
+              <h1 className="text-[16px] font-black text-[#111320]">
+                Cephas Suite
+              </h1>
             </NavLink>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-10 lg:flex">
             {navItems.map((item) => (
-              <NavLink key={item.path} to={item.path} className={navLinkClass}>
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={navLinkClass}
+              >
                 {item.label}
-                {item.hasDropdown && <ChevronDown size={14} strokeWidth={1.8} />}
+                {item.hasDropdown && (
+                  <ChevronDown size={14} strokeWidth={1.8} />
+                )}
               </NavLink>
             ))}
           </div>
 
           {/* Desktop Buttons */}
-          <div className="hidden lg:flex items-center gap-8">
-            <button className="text-[#4F5674]">Sign in</button>
+          <div className="hidden items-center gap-8 lg:flex">
+            <Link
+              to="/sign-in"
+              className="text-sm text-[#4F5674] transition cursor-pointer hover:text-[#173FD7]"
+            >
+              Sign in
+            </Link>
+
             <Link to="/get-started">
-              <Button className="rounded-[8px] bg-[#193FD3] px-8 py-3 text-sm font-medium cursor-pointer text-white hover:bg-[#1535b8]">
+              <Button className="cursor-pointer rounded-[8px] bg-[#193FD3] px-8 py-3 text-sm font-medium text-white hover:bg-[#1535b8]">
                 Get Started
               </Button>
             </Link>
@@ -84,9 +114,11 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            type="button"
+            onClick={() => setIsOpen((previous) => !previous)}
             className="lg:hidden"
-            aria-label="Toggle menu"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
           >
             {isOpen ? <X size={25} /> : <Menu size={25} />}
           </button>
@@ -100,7 +132,6 @@ const Navbar = () => {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  onClick={() => setIsOpen(false)}
                   className={mobileNavLinkClass}
                 >
                   {item.label}
@@ -108,8 +139,17 @@ const Navbar = () => {
                 </NavLink>
               ))}
 
-              <Link to="/get-started" onClick={() => setIsOpen(false)}>
-                <Button className="w-full rounded-[8px] bg-[#193FD3] py-3 text-sm font-medium text-white cursor-pointer">
+              {/* Mobile Sign In */}
+              <Link
+                to="/sign-in"
+                className="text-sm font-medium text-[#4F5674] transition hover:text-[#173FD7]"
+              >
+                Sign in
+              </Link>
+
+              {/* Mobile Get Started */}
+              <Link to="/get-started">
+                <Button className="w-full cursor-pointer rounded-[8px] bg-[#193FD3] py-3 text-sm font-medium text-white">
                   Get Started
                 </Button>
               </Link>

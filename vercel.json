@@ -1,12 +1,12 @@
 {
   "rewrites": [
-    { "source": "/cephas-hr/assets/:path*", "destination": "https://cephas-hr-zk88.vercel.app/assets/:path*" },
-    { "source": "/cephas-hr", "destination": "https://cephas-hr-zk88.vercel.app/" },
-    { "source": "/cephas-hr/:path*", "destination": "https://cephas-hr-zk88.vercel.app/" },
+    { "source": "/cephas-hr/assets/:path*", "destination": "https://hr.cephassuite.com/assets/:path*" },
+    { "source": "/cephas-hr", "destination": "https://hr.cephassuite.com/index.html" },
+    { "source": "/cephas-hr/:path*", "destination": "https://hr.cephassuite.com/index.html" },
 
-    { "source": "/ceproam/assets/:path*", "destination": "https://ceproam-website.vercel.app/assets/:path*" },
-    { "source": "/ceproam", "destination": "https://ceproam-website.vercel.app/" },
-    { "source": "/ceproam/:path*", "destination": "https://ceproam-website.vercel.app/" },
+    { "source": "/ceproam/assets/:path*", "destination": "https://ceproamweb.cephassuite.com/assets/:path*" },
+    { "source": "/ceproam", "destination": "https://ceproamweb.cephassuite.com/index.html" },
+    { "source": "/ceproam/:path*", "destination": "https://ceproamweb.cephassuite.com/index.html" },
 
     { "source": "/agrolink/assets/:path*", "destination": "https://agrolink-phi-seven.vercel.app/assets/:path*" },
     { "source": "/agrolink", "destination": "https://agrolink-phi-seven.vercel.app/index.html" },

@@ -9,18 +9,18 @@ export default defineConfig({
     // Every app goes INSIDE this proxy object.
     proxy: {
       '/cephas-hr': {
-        target: 'https://cephas-hr-zk88.vercel.app',
+        target: 'https://hr.cephassuite.com',
         changeOrigin: true,
         secure: true,
         rewrite: (path) =>
-          path.startsWith('/cephas-hr/assets') ? path.replace('/cephas-hr', '') : '/',
+          path.startsWith('/cephas-hr/assets') ? path.replace('/cephas-hr', '') : '/index.html',
       },
       '/ceproam': {
-        target: 'https://ceproam-website.vercel.app',
+        target: 'https://ceproamweb.cephassuite.com',
         changeOrigin: true,
         secure: true,
         rewrite: (path) =>
-          path.startsWith('/ceproam/assets') ? path.replace('/ceproam', '') : '/',
+          path.startsWith('/ceproam/assets') ? path.replace('/ceproam', '') : '/index.html',
       },
       '/agrolink': {
         target: 'https://agrolink-phi-seven.vercel.app',

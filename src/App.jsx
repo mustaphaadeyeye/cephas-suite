@@ -1,20 +1,28 @@
+
 import React from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Footer from "./components/Footer";
-// import Pricing from "./pages/Pricing";
 import About from "./pages/About";
 import Product from "./pages/Product";
 import Solution from "./pages/Solution";
 import GetStarted from "./pages/GetStarted";
+import SignIn from "./pages/SignIn";
 import ScrollToTop from "./components/ScrollToTop";
 
-// Needs to live inside <BrowserRouter> so useLocation works
 const Layout = () => {
   const { pathname } = useLocation();
-  const hideFooter = pathname === "/get-started";
+
+  const hideFooter =
+    pathname === "/get-started" ||
+    pathname === "/sign-in";
 
   return (
     <>
@@ -27,6 +35,7 @@ const Layout = () => {
         <Route path="/product" element={<Product />} />
         <Route path="/solution" element={<Solution />} />
         <Route path="/get-started" element={<GetStarted />} />
+        <Route path="/sign-in" element={<SignIn />} />
       </Routes>
 
       {!hideFooter && <Footer />}
@@ -34,10 +43,9 @@ const Layout = () => {
   );
 };
 
-// No basename here: the suite lives at the root of its own domain
 const App = () => (
   <BrowserRouter>
-  <ScrollToTop />
+    <ScrollToTop />
     <Layout />
   </BrowserRouter>
 );
